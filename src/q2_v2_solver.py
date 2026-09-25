@@ -441,7 +441,7 @@ def run_case(data, pool, name, target, time_limit, optimize, hint_schedule=None)
         sch.to_csv(OUT / f"{name}_schedule.csv", index=False, encoding="utf-8-sig")
         dl.to_csv(OUT / f"{name}_deliveries.csv", index=False, encoding="utf-8-sig")
     print(json.dumps({"case": name, **summary}, ensure_ascii=False))
-    return summary
+    return summary, sch
 
 
 def main():
@@ -472,8 +472,9 @@ def main():
             hint_schedule=checkpoint_hint,
         )
 
+    target_name = f"target{int(round(args.target))}"
     # A makespan incumbent <= target is itself a constructive feasibility
-    # certificate for that target; do not waste another full CP-SAT phase.
+    # certificate for that target; do not waste another CP-SAT phase.
     if best_schedule is not None and float(best_schedule.return_s.max()) <= float(args.target) + 1e-6:
         target = {
             "status": "FEASIBLE_BY_CONSTRUCTIVE_INCUMBENT",
@@ -485,15 +486,15 @@ def main():
             "target_feasible": True,
             "source": "min_makespan incumbent",
         }
-        best_schedule.to_csv(OUT / "target7000_schedule.csv", index=False, encoding="utf-8-sig")
+        best_schedule.to_csv(OUT / f"{target_name}_schedule.csv", index=False, encoding="utf-8-sig")
     else:
         target, _ = run_case(
-            data, pool, "target7000", args.target, args.time_limit, False,
+            data, pool, target_name, args.target, args.time_limit, False,
             hint_schedule=best_schedule if best_schedule is not None else checkpoint_hint,
         )
 
     (OUT / "run_summary.json").write_text(
-        json.dumps({"target7000": target, "min_makespan": best}, ensure_ascii=False, indent=2),
+        json.dumps({"target": target, "min_makespan": best}, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
 
