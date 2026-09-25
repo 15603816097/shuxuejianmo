@@ -1,0 +1,20 @@
+{
+  "status": "FEASIBLE_CHECKPOINT",
+  "source_workflow_run": 36166631572,
+  "candidate_pool_count": 15218,
+  "boxes": 80,
+  "unique_boxes": 80,
+  "hard_violations": 0,
+  "makespan_s": 6043.8,
+  "sorties": 25,
+  "A_sorties": 12,
+  "B_sorties": 7,
+  "C_sorties": 6,
+  "multi_point_sorties": 2,
+  "transport_energy_kwh": 69.60158261706135,
+  "soft_late_boxes": 3,
+  "soft_total_lateness_s": 3959.850739845026,
+  "solver_best_bound_s": 5719.8,
+  "proven_optimal": false,
+  "note": "Independent artifact audit confirmed exact 80-box coverage, zero hard violations, no aircraft overlap, no battery overlap, and makespan below 7000 s. This is a best-known feasible checkpoint, not a global optimum."
+}
