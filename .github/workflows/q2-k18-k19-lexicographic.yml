@@ -1,0 +1,32 @@
+name: q2-k18-k19-lexicographic
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - '.github/workflows/q2-k18-k19-lexicographic.yml'
+  workflow_dispatch:
+
+jobs:
+  optimize:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        k: [18, 19]
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --upgrade pip
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Optimize lateness then makespan
+        run: python src/q2_fixed_k_lexicographic.py --k ${{ matrix.k }} --phase1-time 600 --phase2-time 360 --triple-limit 900
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q2-k${{ matrix.k }}-lexicographic-results
+          path: results/q2_v2/fixed_k_lexicographic/K${{ matrix.k }}/
