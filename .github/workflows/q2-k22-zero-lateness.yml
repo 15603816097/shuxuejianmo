@@ -1,0 +1,28 @@
+name: q2-k22-zero-lateness
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - 'src/q2_fixed_k_lexicographic.py'
+      - '.github/workflows/q2-k22-zero-lateness.yml'
+  workflow_dispatch:
+
+jobs:
+  optimize-k22:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --upgrade pip
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Optimize K22 lateness then makespan
+        run: python src/q2_fixed_k_lexicographic.py --k 22 --phase1-time 600 --phase2-time 360 --triple-limit 900
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q2-k22-zero-lateness-results
+          path: results/q2_v2/fixed_k_lexicographic/K22/
