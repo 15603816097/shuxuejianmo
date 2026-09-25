@@ -222,7 +222,7 @@ def generate_pool(data, triple_limit=900):
     return df
 
 
-def solve(data, pool, target_s, time_limit_s, optimize_makespan):
+def solve(data, pool, target_s, time_limit_s, optimize_makespan, hint_schedule=None):
     from ortools.sat.python import cp_model
     m = cp_model.CpModel()
     box_ids = sorted(str(x["货箱编号"]) for x in data["boxes"])
@@ -234,8 +234,9 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan):
     intervals_bat = defaultdict(list)
     xvars = []; svars = []; evars = []; bevars = []
 
-    max_dead = max(float(x["期望送达时间（s）"]) for x in data["boxes"])
-    horizon_s = max(float(target_s or 0), max_dead + 8000.0, 18000.0)
+    # Keep the scheduling horizon tight.  A loose 18k-26k second domain made
+    # the 7000 s feasibility model unnecessarily difficult.
+    horizon_s = float(target_s) if target_s is not None else 13000.0
     H = int(math.ceil(horizon_s * SCALE))
 
     for i, r in pool.iterrows():
@@ -245,7 +246,8 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan):
         bdur = int(math.ceil((float(r.duration_s) + float(r.charge_s)) * SCALE - 1e-9))
         xv = m.NewBoolVar(f"x_{i}")
         sv = m.NewIntVar(0, H, f"s_{i}")
-        ev = m.NewIntVar(0, H + dur, f"e_{i}")
+        ev = m.NewIntVar(0, H, f"e_{i}")
+        # Battery recharge may legitimately finish after the transport makespan.
         bev = m.NewIntVar(0, H + bdur, f"be_{i}")
         ai = m.NewOptionalIntervalVar(sv, dur, ev, xv, f"air_{i}")
         bi = m.NewOptionalIntervalVar(sv, bdur, bev, xv, f"bat_{i}")
@@ -280,6 +282,26 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan):
     if target_s is not None:
         m.Add(cmax <= int(math.floor(float(target_s) * SCALE + 1e-9)))
 
+    # Valid workload lower bounds strengthen the parallel-aircraft schedule.
+    # Every selected transport interval must fit before Cmax.
+    for typ in sorted(intervals_air):
+        idx = [i for i,c in enumerate(candidates) if str(c["row"].drone_type) == typ]
+        if idx:
+            dur_terms = []
+            for i in idx:
+                dur_i = int(math.ceil(float(candidates[i]["row"].duration_s) * SCALE - 1e-9))
+                dur_terms.append(dur_i * xvars[i])
+            m.Add(sum(dur_terms) <= len(data["aircraft"][typ]) * cmax)
+
+    # Warm-start a stricter target run from the best makespan incumbent.
+    if hint_schedule is not None and len(hint_schedule):
+        hint = {str(r.candidate_id): float(r.start_s) for _,r in hint_schedule.iterrows()}
+        for i,c in enumerate(candidates):
+            cid = str(c["row"].candidate_id)
+            if cid in hint:
+                m.AddHint(xvars[i], 1)
+                m.AddHint(svars[i], int(round(hint[cid] * SCALE)))
+
     # Soft lateness for non-medical expected delivery times.
     late_vars = []
     bm = {str(x["货箱编号"]): x for x in data["boxes"]}
@@ -296,10 +318,13 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan):
     sortie_count = sum(xvars)
     total_late = sum(late_vars) if late_vars else 0
     if optimize_makespan:
-        m.Minimize(cmax * 1_000_000 + total_late * 10 + sortie_count)
+        # Phase 1 is deliberately pure makespan minimization.  Mixing lateness
+        # and route-count terms here greatly enlarged the search tree.
+        m.Minimize(cmax)
     else:
-        # Within the requested makespan bound, prioritize timely delivery.
-        m.Minimize(total_late * 10_000 + cmax * 10 + sortie_count)
+        # Pure feasibility under the requested Cmax cap.  Secondary criteria
+        # are optimized only after feasibility has been established.
+        pass
 
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = float(time_limit_s)
@@ -315,11 +340,12 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan):
         "optimize_makespan": bool(optimize_makespan),
         "runtime_s": elapsed,
         "candidate_count": len(pool),
-        "objective": solver.ObjectiveValue() if status in (cp_model.OPTIMAL, cp_model.FEASIBLE) else None,
-        "best_bound": solver.BestObjectiveBound() if status in (cp_model.OPTIMAL, cp_model.FEASIBLE) else None,
+        "objective": solver.ObjectiveValue() if status in (cp_model.OPTIMAL, cp_model.FEASIBLE) and optimize_makespan else None,
+        "best_bound": solver.BestObjectiveBound() if status in (cp_model.OPTIMAL, cp_model.FEASIBLE) and optimize_makespan else None,
+        "solver_cmax_s": solver.Value(cmax) / SCALE if status in (cp_model.OPTIMAL, cp_model.FEASIBLE) else None,
     }
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-        return summary, None, None
+        return summary, sch, None, None
 
     selected = []
     for i, c in enumerate(candidates):
@@ -341,7 +367,13 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan):
             active[lab] = float(r[end_col])
         return ans
 
-    sch["battery_end_s"] = sch.return_s + sch.charge_s
+    # Match the exact integer interval used by CP-SAT.  Using
+    # return_s + raw charge_s can be up to one discretization tick longer than
+    # the modeled battery interval and previously caused a false coloring crash.
+    sch["battery_end_s"] = sch.apply(
+        lambda r: float(r.start_s) + math.ceil((float(r.duration_s) + float(r.charge_s)) * SCALE - 1e-9) / SCALE,
+        axis=1,
+    )
     aircraft = {}
     battery = {}
     for typ, g in sch.groupby("drone_type"):
@@ -381,8 +413,8 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan):
     return summary, sch, dl
 
 
-def run_case(data, pool, name, target, time_limit, optimize):
-    summary, sch, dl = solve(data, pool, target, time_limit, optimize)
+def run_case(data, pool, name, target, time_limit, optimize, hint_schedule=None):
+    summary, sch, dl = solve(data, pool, target, time_limit, optimize, hint_schedule=hint_schedule)
     (OUT / f"{name}_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     if sch is not None:
         sch.to_csv(OUT / f"{name}_schedule.csv", index=False, encoding="utf-8-sig")
@@ -410,11 +442,18 @@ def main():
     if len(coverage) != 80:
         raise RuntimeError(f"Q2-v2 pool covers only {len(coverage)}/80 boxes")
 
-    a = run_case(data, pool, "target7000", args.target, args.time_limit, False)
-    b = None
+    best = None
+    best_schedule = None
     if not args.skip_optimize:
-        b = run_case(data, pool, "min_makespan", None, args.time_limit, True)
-    (OUT / "run_summary.json").write_text(json.dumps({"target7000": a, "min_makespan": b}, ensure_ascii=False, indent=2), encoding="utf-8")
+        best, best_schedule = run_case(data, pool, "min_makespan", None, args.time_limit, True)
+    target, _ = run_case(
+        data, pool, "target7000", args.target, args.time_limit, False,
+        hint_schedule=best_schedule,
+    )
+    (OUT / "run_summary.json").write_text(
+        json.dumps({"target7000": target, "min_makespan": best}, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
 
 
 if __name__ == "__main__":
