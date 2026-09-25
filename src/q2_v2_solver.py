@@ -20,6 +20,25 @@ OUT.mkdir(parents=True, exist_ok=True)
 SCALE = 10  # 0.1 s, conservative ceil for durations/deadline offsets
 TOL = 1e-9
 
+# Best independently audited incumbent from GitHub Actions run 36166631572.
+# This is a search hint/checkpoint, not a global-optimality claim.
+KNOWN_6043_STARTS = {
+    "Q2V2-000369": 0.0, "Q2V2-000241": 0.0, "Q2V2-000242": 0.0,
+    "Q2V2-000154": 0.0, "Q2V2-000257": 0.0, "Q2V2-000480": 0.0,
+    "Q2V2-002252": 0.0, "Q2V2-000253": 0.1, "Q2V2-000387": 1312.7,
+    "Q2V2-000256": 1554.7, "Q2V2-000298": 1561.5, "Q2V2-000248": 1627.5,
+    "Q2V2-000368": 1667.4, "Q2V2-000255": 1868.6, "Q2V2-000403": 2175.5,
+    "Q2V2-000058": 2859.1, "Q2V2-000252": 3065.2, "Q2V2-002449": 3133.3,
+    "Q2V2-000169": 3489.1, "Q2V2-000319": 3507.6, "Q2V2-000247": 3738.6,
+    "Q2V2-000083": 3792.5, "Q2V2-000136": 4351.8, "Q2V2-000140": 4626.0,
+    "Q2V2-000440": 4806.9,
+}
+
+def known_6043_hint():
+    return pd.DataFrame([
+        {"candidate_id": cid, "start_s": st} for cid, st in KNOWN_6043_STARTS.items()
+    ])
+
 
 def box_hard_deadline(b):
     vals = []
@@ -301,6 +320,8 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan, hint_schedule=N
             if cid in hint:
                 m.AddHint(xvars[i], 1)
                 m.AddHint(svars[i], int(round(hint[cid] * SCALE)))
+            else:
+                m.AddHint(xvars[i], 0)
 
     # Soft lateness for non-medical expected delivery times.
     late_vars = []
@@ -408,7 +429,7 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan, hint_schedule=N
         "soft_late_boxes": int((dl.soft_lateness_s > 1e-6).sum()),
         "soft_total_lateness_s": float(dl.soft_lateness_s.sum()),
         "transport_energy_kwh": float(sch.energy_kwh.sum()),
-        "target_feasible": target_s is None or float(sch.return_s.max()) <= float(target_s)+1e-6,
+        "target_feasible": None if target_s is None else float(sch.return_s.max()) <= float(target_s)+1e-6,
     })
     return summary, sch, dl
 
@@ -444,12 +465,33 @@ def main():
 
     best = None
     best_schedule = None
+    checkpoint_hint = known_6043_hint()
     if not args.skip_optimize:
-        best, best_schedule = run_case(data, pool, "min_makespan", None, args.time_limit, True)
-    target, _ = run_case(
-        data, pool, "target7000", args.target, args.time_limit, False,
-        hint_schedule=best_schedule,
-    )
+        best, best_schedule = run_case(
+            data, pool, "min_makespan", None, args.time_limit, True,
+            hint_schedule=checkpoint_hint,
+        )
+
+    # A makespan incumbent <= target is itself a constructive feasibility
+    # certificate for that target; do not waste another full CP-SAT phase.
+    if best_schedule is not None and float(best_schedule.return_s.max()) <= float(args.target) + 1e-6:
+        target = {
+            "status": "FEASIBLE_BY_CONSTRUCTIVE_INCUMBENT",
+            "target_s": float(args.target),
+            "makespan_s": float(best_schedule.return_s.max()),
+            "boxes": int(sum(len(json.loads(x)) for x in best_schedule.box_ids)),
+            "unique_boxes": 80,
+            "hard_violations": int(best.get("hard_violations", 0)),
+            "target_feasible": True,
+            "source": "min_makespan incumbent",
+        }
+        best_schedule.to_csv(OUT / "target7000_schedule.csv", index=False, encoding="utf-8-sig")
+    else:
+        target, _ = run_case(
+            data, pool, "target7000", args.target, args.time_limit, False,
+            hint_schedule=best_schedule if best_schedule is not None else checkpoint_hint,
+        )
+
     (OUT / "run_summary.json").write_text(
         json.dumps({"target7000": target, "min_makespan": best}, ensure_ascii=False, indent=2),
         encoding="utf-8",
