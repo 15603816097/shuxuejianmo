@@ -1,0 +1,31 @@
+{
+  "status": "FINAL_FEASIBLE_CHECKPOINT",
+  "source_workflow_run": 36175355270,
+  "method": "lexicographic: minimize soft lateness, then minimize makespan",
+  "candidate_pool_count": 15218,
+  "phase1": {
+    "status": "OPTIMAL",
+    "soft_total_lateness_s": 0.0,
+    "soft_late_boxes": 0,
+    "proven_optimal_current_pool": true
+  },
+  "phase2": {
+    "status": "FEASIBLE",
+    "K": 25,
+    "makespan_s": 6043.8,
+    "best_bound_s": 5758.4,
+    "gap_pct": 4.722194645752681,
+    "boxes": 80,
+    "unique_boxes": 80,
+    "hard_violations": 0,
+    "soft_late_boxes": 0,
+    "soft_total_lateness_s": 0.0,
+    "energy_kwh": 69.6577399039342,
+    "A_sorties": 12,
+    "B_sorties": 7,
+    "C_sorties": 6,
+    "aircraft_overlap_violations": 0,
+    "battery_overlap_violations": 0
+  },
+  "note": "Zero soft lateness is proven optimal in the current candidate-pool model. The 6043.8 s makespan under zero lateness is feasible but not proven optimal."
+}
