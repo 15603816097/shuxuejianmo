@@ -1,0 +1,28 @@
+name: q2-zero-lateness
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - 'src/q2_zero_lateness.py'
+      - '.github/workflows/q2-zero-lateness.yml'
+  workflow_dispatch:
+
+jobs:
+  zero-late:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --upgrade pip
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Search zero-soft-lateness schedule
+        run: python src/q2_zero_lateness.py --time-limit 360 --triple-limit 900
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q2-zero-lateness-results
+          path: results/q2_v2/zero_late/
