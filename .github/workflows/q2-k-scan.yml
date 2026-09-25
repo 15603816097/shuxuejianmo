@@ -1,0 +1,33 @@
+name: q2-k18-k28-scan
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - 'src/q2_k_scan_v2.py'
+      - '.github/workflows/q2-k-scan.yml'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      max-parallel: 11
+      matrix:
+        k: [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --upgrade pip
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Solve fixed K
+        run: python src/q2_k_scan_v2.py --k ${{ matrix.k }} --time-limit 360 --triple-limit 900
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q2-k${{ matrix.k }}-results
+          path: results/q2_v2/k_scan/K${{ matrix.k }}/

@@ -366,7 +366,7 @@ def solve(data, pool, target_s, time_limit_s, optimize_makespan, hint_schedule=N
         "solver_cmax_s": solver.Value(cmax) / SCALE if status in (cp_model.OPTIMAL, cp_model.FEASIBLE) else None,
     }
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-        return summary, sch, None, None
+        return summary, None, None
 
     selected = []
     for i, c in enumerate(candidates):
