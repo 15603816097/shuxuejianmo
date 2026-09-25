@@ -1,0 +1,18 @@
+{
+  "deadline_s": 3600.0,
+  "service_count": 8,
+  "services": [
+    "S001",
+    "S002",
+    "S006",
+    "S007",
+    "S010",
+    "S012",
+    "S013",
+    "S014"
+  ],
+  "full_interval_sum_diagnostic_s": 11590.608933069318,
+  "R2_window_capacity_s": 7200.0,
+  "proves_zero_hard_impossible_under_single_service_contract": false,
+  "note": "Diagnostic only: post-deadline return/turn portions cannot be counted in the 0-3600 s capacity window."
+}

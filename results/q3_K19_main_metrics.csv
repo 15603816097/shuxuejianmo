@@ -1,0 +1,8 @@
+metric,value
+total_sorties,19
+direct_feasible,0
+relay_feasible,19
+infeasible,0
+all_19_certification_records_bound,True
+relay_peak_R2,7
+R2_feasible,False

@@ -1,0 +1,5 @@
+﻿case,candidate_count,transport_pass,geometry_pass,relay_pass,route_feasible,best_route,best_margin
+SINGLE,8,6,0,0,0,O01->S008->O01,-6.213629794260157
+DOUBLE,616,143,0,0,0,O01->S001->S008->O01,-6.213629794260157
+TRIPLE,252,14,0,0,0,O01->S005->S008->S009->O01,-3.1859671451037883
+ALL,876,163,0,0,0,O01->S005->S008->S009->O01,-3.1859671451037883

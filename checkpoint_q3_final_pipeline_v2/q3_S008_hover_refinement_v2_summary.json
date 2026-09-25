@@ -1,0 +1,24 @@
+{
+  "route": "O01->S008->O01",
+  "box_set": [
+    "S008-MED-01"
+  ],
+  "drone_type": "B",
+  "relay_required_block_count": 4,
+  "candidate_count": 82,
+  "best": {
+    "x": 109.22252777777778,
+    "y": 23.06485555555556,
+    "altitude": 347.8144226074219,
+    "AGL": 50.0,
+    "terrain_elevation_m": 297.8144226074219,
+    "access_margin": -0.07284085591581402,
+    "backhaul_margin": -0.07712024304419174,
+    "joint_margin": -0.07712024304419174,
+    "stage": "binding_region_seed_strict"
+  },
+  "old_best_joint_margin": -0.0771202430435664,
+  "improvement_db": -6.253331186201194e-13,
+  "positive": false,
+  "pipeline_sha256": "v2_pending"
+}

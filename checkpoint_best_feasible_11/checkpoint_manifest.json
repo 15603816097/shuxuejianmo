@@ -1,0 +1,25 @@
+{
+  "status": "BEST_KNOWN_FEASIBLE_NOT_PROVEN_OPTIMAL",
+  "reproduction_command": "PYTHONPATH=.deps:src python src/finalize_current_results.py",
+  "files_sha256": {
+    "resource_events.csv": "09229f4caa82585eb291f8f75a8a6b3e46b863f674f15ecdb7140789f2322c62",
+    "q3_continuous_certification.csv": "850fa9c3365fccb48c7c8ed733907e8f7b1359ae53a5660b2e8f355ce33b9cef",
+    "revalidate_cap11.log": "3d33ec033b38328866896c1a6e2a61a5c248add843a398d9e1415671c927c273",
+    "parity_evaluators.py": "787da880baea9eb6541ad19c00bf7e27656aef17c04cbf7596790c2c0f957eb4",
+    "plot_current_results.py": "dc4672f88c372d46fcf9bc8c8a174f030ac1ecaeff7c5337845ed4bae5d5868b",
+    "deliveries.csv": "72edb2b2018914bd4803f64623374584b91a42182f1baf528ed39a49a646910a",
+    "minimal_pipeline.py": "048b8e143e60ba1c59b75bda65fbf848d11a6eb004598cd97e2e840d8745ad74",
+    "continuous_final_milp.log": "8d79052580a5492b4b04f82ba863c87d312fa2f09293277de3e7da2f6e3c9bb4",
+    "finalize_current_results.py": "24534a02a7f109a32197157999b46128df6d35633ec49722ed966314467c92ce",
+    "continuous_joint.py": "2dd3bc9885fc09567125dc18ff0dc915402b95861cc912110101fe572b8a2a1b",
+    "final_joint.py": "970006c079c888d03501695219ac197e7c289e4df435a66ef8c8f62ff10c61cc",
+    "continuous_cap13.log": "2d3680a36514e79544791817c70ff5e67055f7e6114696fe94bbfc32edb11ebb",
+    "metrics.json": "159463e6c3c6e0a4b81bddac1400d9d80d240ef8ad4c6fe59b616e78a03e0960",
+    "continuous_cap10_strengthened.py": "56de1fed0a0321b3c303a1fe8d1f04820f2b62db330d45e9aede273955dee370",
+    "复现清单.json": "9673818f2161515a75203d183f1eb4cf60742d5af847e471e830c12f75604c67",
+    "cap10_strengthened.log": "b2399c128288f0d4918ba227fd8d2e7f8073a6eeaa2ea8b296c8627d4052c39c",
+    "continuous_cap_proof.py": "5b12b833d6b66ae60a40184d8527b6766e872884b13ada8f5ae6631ad1c8ee62",
+    "schedule.csv": "3f93513bdf41d3242e62dce35a7e444ca1b2ac5da24cbe608fe1ca9e218553f3",
+    "revalidate_cap11.py": "21e92fbb75e26675b5ad4b60e81402f44faa8860eb2c09ff4f57bb30cb753aa0"
+  }
+}

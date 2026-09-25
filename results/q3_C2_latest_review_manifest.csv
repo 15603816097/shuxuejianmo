@@ -1,0 +1,9 @@
+﻿path,exists,modification_time,size_bytes,sha256
+src/q3_C2_route_semantics_audit.py,True,2026-09-25T16:21:37+0800,3513,727d39ebff1ffcf0a0ceba1324629da6eab58e6b553ac202e96a5fabde52585f
+src/q3_C2_S008_authoritative_closure.py,True,2026-09-25T16:33:49+0800,14210,16c4ab4ef3f4ce7c84f298b3acdf629de3f8eec8fb28927e2b5c41d8dae47f20
+results/q3_C2_authoritative_timeline.csv,True,2026-09-25T16:33:54+0800,3292,312e40c7998bdfb24a37a5f692f94547ed0ea608e91b39dd9c98630431f5588d
+results/q3_C2_S008_relay_component_ledger.csv,True,2026-09-25T16:33:56+0800,1578,e077772e43cfb62211e41d105d43dab81bfb8a728334337839d8286a0748b0c9
+results/q3_C2_S008_relay_service_coverage_audit.csv,True,2026-09-25T16:33:56+0800,569,6fddd7d9d053d2c5f5cdfe9e6da886d518778fb057749a71bbbcec02fa4d5d98
+results/q3_C2_S008_dynamic_relay_subblocks.csv,True,2026-09-25T16:33:56+0800,52409,d36d71827d71b0ee4a8a50a5e104203c467dd70d77034a7cec99b77eec9d8318
+results/q3_C2_S008_dynamic_relay_chain.csv,True,2026-09-25T16:33:56+0800,893,de493f2139b797709f38e554fcb691a2dfbc305c774c77639971f3a30bbad612
+results/q3_C2_model_review_gap_list.csv,True,2026-09-25T16:34:04+0800,1445,546cc17e8f3798d7491258982f32aea5fe1577bb12c200599adba7f4cc2940f0

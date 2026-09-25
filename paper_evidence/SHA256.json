@@ -1,0 +1,17 @@
+{
+  "resource_events.csv": "09229f4caa82585eb291f8f75a8a6b3e46b863f674f15ecdb7140789f2322c62",
+  "final_schedule_q3_binding.csv": "5aa4c64453263041aadac4663376337270943c8fa8b182f6e01ecbb236e1fc34",
+  "paper_main_results.csv": "03f7173ee3786a041f8f4cf374702b6ba3c0b53a065f975d1c6807b8cf7c0b1c",
+  "q1_batches_baseline.csv": "e7ddceafdcc21381af92affb27d416c69055d27c2bee21d4638cfa676598f176",
+  "deliveries.csv": "72edb2b2018914bd4803f64623374584b91a42182f1baf528ed39a49a646910a",
+  "final_q3_continuous_certification.csv": "850fa9c3365fccb48c7c8ed733907e8f7b1359ae53a5660b2e8f355ce33b9cef",
+  "resource_sensitivity.csv": "a6f0f1e30923d97dc6048221b0c2e1ea1afb6271e2764c13866d70584e034491",
+  "final_battery_type_audit.csv": "424e5f9473fe74ff020c21162b4252bcbe17f40f713440f8c037bcf016141cab",
+  "current_result_summary.json": "2d2bae9b7ed23bca8adf12f6ea8b6c625d87509f927e8749fdd961967300fe80",
+  "result_q2_resource_peaks.png": "bbfb5ce0c607b598792dce3e16bc8548a66852e2000ad594bac61114546ac967",
+  "final_late_delivery_audit.csv": "69683bbb19862758b891b19ea6a0ff158dcf650df58c164f3ece2229c2b081ff",
+  "final_resource_capacity_audit.csv": "d0aeefefbb2bf9b33e68b2580c2bfde62ecb1ff9a28c11b3682f6eee3fcdf9e8",
+  "q1_capability_baseline.csv": "ab9b178ecc0e363c949ad64caf4883509379d7821abdab88fe2a77bdd26eb7be",
+  "schedule.csv": "3f93513bdf41d3242e62dce35a7e444ca1b2ac5da24cbe608fe1ca9e218553f3",
+  "result_q4_resource_sensitivity.png": "3203c78212d8bc3358b639745d5d7cf52f1350af1b41e69e84dcfed7ad0a1db6"
+}

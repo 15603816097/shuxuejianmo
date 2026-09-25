@@ -1,0 +1,15 @@
+{
+  "route": "O01->S011->S008->O01",
+  "relay_required_service_blocks": 1,
+  "block_feasible_hover_count": 0,
+  "relay_chain_blocks": 1,
+  "relay_ids_used": [
+    "R01"
+  ],
+  "max_relays": 2,
+  "min_block_joint_margin": -6.448668979438793,
+  "communication_holes": 1,
+  "component_inventory": 6,
+  "route_feasible": false,
+  "note": "Each block independently certified; relay timing is backsolved from block start, with return/turnaround and no relocation teleportation."
+}

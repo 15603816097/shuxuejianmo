@@ -1,0 +1,50 @@
+{
+  "R": 2,
+  "zero_violation": false,
+  "solver": {
+    "zero": {
+      "status": 2,
+      "message": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)",
+      "objective": null,
+      "mip_gap": null,
+      "runtime_s": 0.5770347118377686
+    },
+    "boxes": {
+      "status": 1,
+      "message": "Time limit reached. (HiGHS Status 13: Time limit reached)",
+      "objective": 49.0,
+      "mip_gap": 1.0,
+      "runtime_s": 30.00691246986389
+    },
+    "sorties": {
+      "status": 1,
+      "message": "Time limit reached. (HiGHS Status 13: Time limit reached)",
+      "objective": 8.0,
+      "mip_gap": 1.0,
+      "runtime_s": 30.00646209716797
+    },
+    "late": {
+      "status": 1,
+      "message": "Time limit reached. (HiGHS Status 13: Time limit reached)",
+      "objective": 411137.6210346485,
+      "mip_gap": 1.0,
+      "runtime_s": 30.007872581481934
+    },
+    "maxlate": {
+      "status": 1,
+      "message": "Time limit reached. (HiGHS Status 13: Time limit reached)",
+      "objective": 12658.120404836976,
+      "mip_gap": 1.0,
+      "runtime_s": 30.007791757583618
+    },
+    "makespan": {
+      "status": 1,
+      "message": "Time limit reached. (HiGHS Status 13: Time limit reached)",
+      "objective": 20533.67674886385,
+      "mip_gap": 0.8813705922515852,
+      "runtime_s": 30.00826096534729
+    }
+  },
+  "p1": "FAIL",
+  "note": "Continuous variables and disjunctive resource constraints; no time grid."
+}

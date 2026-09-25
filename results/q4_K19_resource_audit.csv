@@ -1,0 +1,6 @@
+resource,inventory,observed_peak,feasible
+transport,8,4,True
+relay,2,7,False
+B_battery,4,4,True
+C_battery,4,4,True
+service_per_area,1,1,True

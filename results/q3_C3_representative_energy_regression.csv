@@ -1,0 +1,3 @@
+﻿route,drone_type,box_set,blocks,transport_energy_kwh,relay_energy_kwh_formal,total_energy_kwh_formal,transport_reserve_ok,component_ledger_ok,communication_geometry_pass,route_feasible
+O01->S005->S008->S009->O01,B,"[""S008-MED-01"", ""S005-MED-01"", ""S009-MED-01""]",10,2.959439427102586,3.0333976254333535,5.99283705253594,True,False,False,False
+O01->S005->S008->S009->O01,B,"[""S008-MED-01"", ""S008-WAT-01"", ""S005-MED-01"", ""S009-MED-01""]",10,3.3427362423973923,3.0333976254333535,6.376133867830745,False,False,False,False

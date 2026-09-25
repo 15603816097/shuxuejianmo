@@ -1,0 +1,14 @@
+{
+  "candidate_count": 61441,
+  "single": 339,
+  "double": 7353,
+  "triple": 53749,
+  "route_skeleton_count": 2901,
+  "covered_boxes": 80,
+  "uncovered_boxes": 0,
+  "min_candidates_per_box": 267,
+  "median_candidates_per_box": 794.0,
+  "max_candidates_per_box": 4572,
+  "frozen_sha256": "5f5fc70d5ed19d36644cdad811b12bdac89d19f18393218c72fca28dae32afeb",
+  "delta_backhaul_db": 1.1
+}

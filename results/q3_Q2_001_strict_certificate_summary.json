@@ -1,0 +1,9 @@
+{
+  "primitive_intervals": 549,
+  "los_cells": 149337,
+  "continuous_certificate_pass": true,
+  "minimum_los_clearance_lower_bound": -52.496814839404095,
+  "minimum_link_margin_lower_bound": 2.21426478860225,
+  "timeline_continuity_pass": true,
+  "note": "Path-loss bound uses endpoint/quadratic stationary distance maximum; LOS bound uses affine-in-time endpoint minima for each fixed DEM cell, with obstruction loss applied when clearance is nonpositive."
+}

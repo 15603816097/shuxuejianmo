@@ -1,0 +1,3 @@
+方案,sorties,late_boxes,late_sorties,total_lateness_s,max_lateness_s,makespan_s,total_energy_kwh,status
+A_连续时间当前best-known,18,11,6,558271.122743989,90070.22608864636,98669.59708634084,61.81952679322391,BEST_KNOWN_FEASIBLE_NOT_PROVEN_OPTIMAL
+B_60s及时性优先基线,18,14,7,183022.21837638423,19782.75360869577,23830.440550724878,61.81952679322391,60s baseline

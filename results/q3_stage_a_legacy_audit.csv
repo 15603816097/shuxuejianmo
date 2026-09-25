@@ -1,0 +1,7 @@
+decision,legacy_logic,new_required_logic,must_replace
+sortie start time,_build_stage_a earliest-available list schedule,EDF event scheduler with deadline-aware candidate starts,True
+drone assignment,_build_stage_a first available aircraft,candidate assignment inside EDF event scheduler,True
+battery assignment,_build_stage_a earliest battery,candidate assignment with charge interval and SOC gate,True
+relay assignment,_build_stage_a relay availability before dynamic demand,"relay-required intervals first, then R01/R02 assignment",True
+relay timing,whole-sortie preparation approximation,prepare/outbound/link/service/return/turnaround chain,True
+resource ordering,post-hoc event check,non-overlap constraints during candidate selection,True

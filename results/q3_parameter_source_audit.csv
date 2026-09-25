@@ -1,0 +1,29 @@
+parameter,value,unit,source_file,source_sheet,source_cell_or_field,hardcoded
+载波频率（MHz）,2400.0,see parameter name,通信链路参数.xlsx,数据,传播参数:载波频率（MHz）,False
+系统损耗（dB）,3.0,see parameter name,通信链路参数.xlsx,数据,传播参数:系统损耗（dB）,False
+地形遮挡附加损耗（dB）,10.0,see parameter name,通信链路参数.xlsx,数据,传播参数:地形遮挡附加损耗（dB）,False
+接收灵敏度（dBm）,-98.0,see parameter name,通信链路参数.xlsx,数据,接收参数:接收灵敏度（dBm）,False
+衰落裕量（dB）,8.0,see parameter name,通信链路参数.xlsx,数据,接收参数:衰落裕量（dB）,False
+发射功率（dBm）,20.0,see parameter name,通信链路参数.xlsx,数据,运输无人机:发射功率（dBm）,False
+天线增益（dBi）,3.0,see parameter name,通信链路参数.xlsx,数据,运输无人机:天线增益（dBi）,False
+发射功率（dBm）,20.0,see parameter name,通信链路参数.xlsx,数据,中继接入端:发射功率（dBm）,False
+天线增益（dBi）,6.0,see parameter name,通信链路参数.xlsx,数据,中继接入端:天线增益（dBi）,False
+发射功率（dBm）,19.0,see parameter name,通信链路参数.xlsx,数据,中继回传端:发射功率（dBm）,False
+天线增益（dBi）,8.0,see parameter name,通信链路参数.xlsx,数据,中继回传端:天线增益（dBi）,False
+发射功率（dBm）,27.0,see parameter name,通信链路参数.xlsx,数据,固定网关 G01:发射功率（dBm）,False
+天线增益（dBi）,12.0,see parameter name,通信链路参数.xlsx,数据,固定网关 G01:天线增益（dBi）,False
+天线离地高度（m）,20.0,see parameter name,通信链路参数.xlsx,数据,固定网关 G01:天线离地高度（m）,False
+prepare_s,180.0,s,中继无人机数据.xlsx,数据,prep_s,False
+link_setup_s,30.0,s,中继无人机数据.xlsx,数据,link_s,False
+turnaround_s,300.0,s,中继无人机数据.xlsx,数据,turn_s,False
+hover_power_kw,1.05,kW,中继无人机数据.xlsx,数据,hover_power_kw,False
+communication_additional_power_kw,0.05,kW,中继无人机数据.xlsx,数据,comm_power_kw,False
+cruise_power_kw,1.15,kW,中继无人机数据.xlsx,数据,power_kw,False
+cruise_speed_mps,15.0,m/s,中继无人机数据.xlsx,数据,speed,False
+climb_speed_mps,4.0,m/s,中继无人机数据.xlsx,数据,climb_speed,False
+descent_speed_mps,3.0,m/s,中继无人机数据.xlsx,数据,descend_speed,False
+climb_efficiency,0.72,1,中继无人机数据.xlsx,数据,eta_climb,False
+descent_efficiency,0.0,1,中继无人机数据.xlsx,数据,eta_descend,False
+component_energy_kwh,3.2,kWh,中继无人机数据.xlsx,数据,energy_kwh,False
+component_inventory,6.0,groups,中继无人机数据.xlsx,数据,component_inventory,False
+component_full_charge_s,1800.0,s,中继无人机数据.xlsx,数据,component_full_charge_s,False

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-09-25T00:04:44.963818+00:00",
+  "random_seed": 0,
+  "input_files": [
+    {
+      "path": "/home/chenkeming/shuxuejianmo/data/无人机应急物资运输基础数据/物资需求与配送时限.xlsx",
+      "sha256": "5a3346159ceddcf585859d270b8f62114b388a1f737fbe64ffde0ee1fdc8170a",
+      "bytes": 17474
+    },
+    {
+      "path": "/home/chenkeming/shuxuejianmo/data/无人机应急物资运输基础数据/运输无人机数据.xlsx",
+      "sha256": "9296a657c07e042afba6aeea7999665d9cd24e00b592fd6c269de6e338480dcb",
+      "bytes": 11746
+    },
+    {
+      "path": "/home/chenkeming/shuxuejianmo/data/无人机应急物资运输基础数据/调度中心与服务区.xlsx",
+      "sha256": "541a7af1ded08c9a3ff448480332cb5f6a54902f0afa6e9bcd50c1d2b2b34e38",
+      "bytes": 11017
+    }
+  ],
+  "runtime": {
+    "name": "python",
+    "version": "3.13.13",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "dependencies": {
+      "numpy": "2.5.3",
+      "pandas": "3.0.3",
+      "scipy": "1.17.1"
+    }
+  },
+  "key_parameters": {
+    "K_range": [
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "hard_deadline": "medical_or_first_batch",
+    "soft_deadline": "non_medical_expected",
+    "weighted_penalty": "equal_box_seconds",
+    "q3_relay_as_constraint": false,
+    "proven_optimal": false
+  },
+  "reproduce_command": "PYTHONPATH=.deps:src python src/q2_sortie_count_sensitivity_19_27.py"
+}

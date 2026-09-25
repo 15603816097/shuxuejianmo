@@ -1,0 +1,29 @@
+{
+  "A_original_baseline": {
+    "hard_tardy_boxes": 13,
+    "hard_tardy_sorties": 7,
+    "max_lateness_s": 4356.821687883178,
+    "total_lateness_s": 35379.21324928059,
+    "completion_time_s": 10128.488566108414,
+    "total_energy_kwh": 59.654457520309826,
+    "relay_peak": 4
+  },
+  "B_resource_adjusted": {
+    "hard_tardy_boxes": 22,
+    "hard_tardy_sorties": 11,
+    "max_lateness_s": 11436.19384370591,
+    "total_lateness_s": 135559.0987857019,
+    "completion_time_s": 17581.034724922953,
+    "total_energy_kwh": 59.654457520309826,
+    "relay_peak": 2
+  },
+  "C_joint_deadline_first": {
+    "hard_tardy_boxes": 26,
+    "hard_tardy_sorties": 13,
+    "max_lateness_s": 6540.095352375125,
+    "total_lateness_s": 106895.27753776823,
+    "completion_time_s": 17172.0813959778,
+    "total_energy_kwh": 59.65445752030983,
+    "relay_peak": 2
+  }
+}

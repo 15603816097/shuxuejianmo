@@ -1,0 +1,22 @@
+{
+  "universe_boxes": 80,
+  "candidate_count": 51761,
+  "covered_boxes": 72,
+  "missing_boxes": [
+    "S002-FOD-01",
+    "S002-FOD-02",
+    "S002-HYG-01",
+    "S002-MED-01",
+    "S002-WAT-01",
+    "S002-WAT-02",
+    "S002-WAT-03",
+    "S002-WAT-04"
+  ],
+  "solver_status": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)",
+  "status_code": 2,
+  "objective": null,
+  "best_bound": null,
+  "mip_gap": null,
+  "runtime_seconds": 0.3630638122558594,
+  "exact_cover": false
+}

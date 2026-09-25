@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-09-24T23:59:52.919568",
+  "command": "PYTHONPATH=.deps python src/parity_evaluators.py && PYTHONPATH=.deps python -m pytest -q tests",
+  "runtime": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "code": [
+    {
+      "path": "src/continuous_joint.py",
+      "sha256": "96c2c89c3e448131492b69d255650e6e5bb6d16f968e884bcacdc1c3fb6e3d80"
+    },
+    {
+      "path": "src/final_joint.py",
+      "sha256": "970006c079c888d03501695219ac197e7c289e4df435a66ef8c8f62ff10c61cc"
+    },
+    {
+      "path": "src/grid60_parity_test.py",
+      "sha256": "200cee6e981cfadd9a08f4ad18f4dd7c504bddb5189bcb3f97727b62664567a5"
+    },
+    {
+      "path": "src/minimal_pipeline.py",
+      "sha256": "048b8e143e60ba1c59b75bda65fbf848d11a6eb004598cd97e2e840d8745ad74"
+    },
+    {
+      "path": "src/parity_evaluators.py",
+      "sha256": "787da880baea9eb6541ad19c00bf7e27656aef17c04cbf7596790c2c0f957eb4"
+    }
+  ],
+  "golden_outputs": [
+    {
+      "path": "results/golden_grid60_schedule.csv",
+      "sha256": "37ba58cc25c23fdfaf92426d9ca33d1e57604127e8a108922404491af8a5b2a6"
+    }
+  ],
+  "parity_logs": [
+    {
+      "path": "logs/parity_delivery_diff.csv",
+      "sha256": "2c0dfca5628b0175aa4c0ae5c5029180d6f48e56c6c2735563705defdefaa82f"
+    },
+    {
+      "path": "logs/parity_repairs.md",
+      "sha256": "3b0182d858901842363d25d2f01703a7c5d3ebb0749f3500daa9ba9c996b3eda"
+    },
+    {
+      "path": "logs/parity_task_diff.csv",
+      "sha256": "0a23ecd9767e7405e8bd53786c309730634df5ec7ffc7603806efe2784e025bf"
+    }
+  ],
+  "parity_review": {
+    "path": "logs/P1_parity_review.md",
+    "sha256": "7bd6434619fd5d09ec69b1c1f0719542ce9059b6eab1d5a3cadb4b6b7be8825a",
+    "status": "PASS_FIXED_GOLDEN_SCHEDULE_ONLY"
+  },
+  "grid60_parity_status": "PASS_FIXED_GOLDEN_SCHEDULE_ONLY",
+  "updated_at": "2026-09-25T00:02:47.033556"
+}

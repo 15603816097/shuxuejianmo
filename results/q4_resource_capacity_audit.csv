@@ -1,0 +1,12 @@
+resource,scope,inventory,observed_peak,feasible
+transport,global,8.0,2.0,True
+transport_A,type_pool,4.0,0.0,True
+transport_B,type_pool,2.0,2.0,True
+transport_C,type_pool,2.0,2.0,True
+relay,global,2.0,2.0,True
+relay_energy_component,paired_with_relay,2.0,2.0,True
+B_battery,global,4.0,3.0,True
+C_battery,global,4.0,2.0,True
+service,per_station_assumption_capacity_1,1.0,1.0,True
+service,global_diagnostic,15.0,2.0,True
+intervals,all_transport_battery_service,,,True

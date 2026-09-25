@@ -1,0 +1,17 @@
+{
+  "candidate_count": 9946,
+  "best_x": 109.21731067380951,
+  "best_y": 23.06126800571429,
+  "best_altitude": 332.8292846679688,
+  "height_offset": 92.50000000000006,
+  "best_access_margin": -0.42648397985067277,
+  "best_backhaul_margin": 0.33826001845588394,
+  "best_joint_margin": -0.42648397985067277,
+  "energy_ok": true,
+  "dem_ok": true,
+  "height_ok": true,
+  "feasible": false,
+  "valid_feasible_count": 0,
+  "seed_count": 20,
+  "search": "top20 seeds; levels ±50m/10m, ±20m/5m, ±5m/2.5m; joint XY+altitude"
+}

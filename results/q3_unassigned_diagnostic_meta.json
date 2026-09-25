@@ -1,0 +1,23 @@
+{
+  "K_values": [
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28
+  ],
+  "intersection_count": 50,
+  "union_count": 50,
+  "fixed_set": true,
+  "assigned_K19_count": 30,
+  "assigned_K19_boxes": 30,
+  "unassigned_K19_boxes": 50,
+  "rejection_rows": 2624,
+  "note": "Strict dynamic certificate failures lack access/backhaul margins in source logs; classified conservatively as OTHER_TRUE_UNKNOWN."
+}

@@ -1,0 +1,38 @@
+{
+  "relay_required_interval_count": 661,
+  "primitive_interval_count": 1289,
+  "direct_available_interval_count": 628,
+  "best_x": 109.21744586825119,
+  "best_y": 23.061296307542012,
+  "best_altitude": 330.2303819725127,
+  "height_above_ground": 104.20064259262989,
+  "best_access_margin": -0.42624270203127423,
+  "best_backhaul_margin": 0.33760127532386264,
+  "best_joint_margin": -0.42624270203127423,
+  "binding_interval": 0,
+  "candidate_evaluations": 6084,
+  "strict_certificate_pass": false,
+  "seeds": [
+    11,
+    23,
+    37,
+    53,
+    71,
+    89
+  ],
+  "search_domain": [
+    [
+      109.03277777777778,
+      109.44527777777778
+    ],
+    [
+      22.86138888888889,
+      23.224722222222223
+    ],
+    [
+      50.0,
+      300.0
+    ]
+  ],
+  "note": "Global DE over full DEM longitude/latitude domain; strict bound uses all relay-required primitive endpoints and worst-case terrain loss."
+}

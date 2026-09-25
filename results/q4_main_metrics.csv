@@ -1,0 +1,5 @@
+scenario,group_count_options,late_boxes,late_sorties,total_lateness_s,max_lateness_s,makespan_s,energy_kwh,relay_peak_global,transport_peak_global,B_battery_peak_global,C_battery_peak_global,service_peak_global,service_peak_per_station,resource_intervals_no_overlap
+original_baseline,"2,3",13,7,35379.2132492806,4356.821687883178,10128.488566108414,59.65445752030984,8,4,4,4,4,2,False
+resource_adjusted,"2,3",22,11,135559.0987857019,11436.19384370591,17581.034724922953,59.65445752030984,4,2,4,3,2,2,False
+joint_deadline_first,"2,3",26,13,106895.27753776824,6540.095352375123,17172.0813959778,59.65445752030983,4,2,4,4,2,2,False
+final_unified_checkpoint,"2,3",11,6,558271.122743989,90070.22608864636,98669.59708634084,59.65445752030984,2,2,3,2,2,1,True

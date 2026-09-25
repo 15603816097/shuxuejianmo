@@ -1,0 +1,3 @@
+solution,continuous_solution_status,improvement_late_boxes,late_boxes,late_sorties,total_lateness,max_lateness,makespan,energy,resource_peaks
+60s baseline,BASELINE,0,14,7,183022.21837638423,19782.75360869577,23830.440550724878,61.81952679322391,from grid60 parity log
+continuous best-known,BEST_KNOWN_FEASIBLE_NOT_PROVEN_OPTIMAL,3,11,6,558271.122743989,90070.22608864636,98669.59708634084,61.81952679322391,"{'transport': 2, 'relay': 2, 'battery': 5, 'service': 2}"

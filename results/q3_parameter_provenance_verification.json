@@ -1,0 +1,7 @@
+{
+  "runtime_rows": 27,
+  "workbook_matches": 27,
+  "suspicious_literals": 0,
+  "independent_provenance_pass": true,
+  "mutation_parameter_fails": true
+}

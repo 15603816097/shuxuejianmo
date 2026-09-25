@@ -1,0 +1,23 @@
+{
+  "aggregate": {
+    "TRANSPORT_ENERGY_RESERVE": 463,
+    "PAYLOAD_VOLUME": 250,
+    "COMMUNICATION_GEOMETRY": 163
+  },
+  "by_case": {
+    "SINGLE": {
+      "COMMUNICATION_GEOMETRY": 6,
+      "PAYLOAD_VOLUME": 2
+    },
+    "DOUBLE": {
+      "PAYLOAD_VOLUME": 248,
+      "TRANSPORT_ENERGY_RESERVE": 225,
+      "COMMUNICATION_GEOMETRY": 143
+    },
+    "TRIPLE": {
+      "TRANSPORT_ENERGY_RESERVE": 238,
+      "COMMUNICATION_GEOMETRY": 14
+    }
+  },
+  "frozen_pipeline_sha256": "1174d8bd1169c72dc253c2025eab5c7c71bb23ca4d2e251711bcac668319c668"
+}

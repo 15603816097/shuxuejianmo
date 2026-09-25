@@ -1,0 +1,25 @@
+{
+  "service_duration_plus_1s_fails": true,
+  "service_mutated_checks": {
+    "deadline": true,
+    "transport_interval": true,
+    "relay_interval": true,
+    "service_interval": false,
+    "battery_interval": true,
+    "resource_peak": true,
+    "relay_energy": true,
+    "transport_energy": true
+  },
+  "charging_scale_plus_10pct_fails": true,
+  "charging_mutated_checks": {
+    "deadline": true,
+    "transport_interval": true,
+    "relay_interval": true,
+    "service_interval": true,
+    "battery_interval": false,
+    "resource_peak": true,
+    "relay_energy": true,
+    "transport_energy": true
+  },
+  "baseline_grid60_parity": "PASS"
+}

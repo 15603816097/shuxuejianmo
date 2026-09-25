@@ -1,0 +1,5 @@
+stage,objective_name,status,message,objective,lower_bound,upper_bound,mip_gap,runtime_s,variables,constraints
+A,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,0.7003233432769775,1083,1954
+B,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,0.5773046016693115,1083,1954
+C,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,0.5714750289916992,1083,1954
+A,boxes,1,Time limit reached. (HiGHS Status 13: Time limit reached),14.0,0.0,14.0,1.0,25.01263999938965,1083,1954

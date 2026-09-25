@@ -1,0 +1,1 @@
+PYTHONPATH=.deps:src python src/final_metric_audit.py

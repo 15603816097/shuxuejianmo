@@ -1,0 +1,5 @@
+﻿review_item,review_expected,current_implementation,difference,file,function,needs_code_change
+authoritative timeline / delivery,唯一时间轴包含loading、flight、逐箱handoff、return，delivery来自handoff,已实现build_timeline；19行连续事件，8箱逐箱handoff，delivery_time_s写入审计,旧反馈称沿用multi_traj且无逐箱handoff；与当前脚本不一致,src/q3_C2_S008_authoritative_closure.py,build_timeline,False
+component ledger,C01-C06正式SOC、reserve、两阶段充电、可用时间,relay_component_ledger调用正式函数；C01-C06均输出，C05/C06显式UNUSED,旧反馈称未建账本；与当前结果不一致,src/q3_C2_S008_authoritative_closure.py,component_and_chain,False
+R=2 seamless handoff,逐block覆盖、prepare/outbound/link/service/return/turnaround、gap=0；不可行时明确FAIL,chain记录正式时间字段；relay_service_coverage_audit.csv逐block记录coverage/gap；当前无正裕量block明确fully_covered=False,需要补充可复核coverage证据，不改变模型,src/q3_C2_S008_authoritative_closure.py,component_and_chain/main,False
+climb/descent hover candidates,候选由真实3D轨迹点+局部XY偏移生成,candidates输出candidate_source=trajectory_3d_endpoints_plus_local_xy_offsets，并含height_offset、dem_legal、height_legal,旧反馈称仅端点线；需输出候选来源字段证明已修复,src/q3_C2_S008_authoritative_closure.py,candidates,False

@@ -1,0 +1,64 @@
+{
+  "seed": 20260924,
+  "q1_batches": 18,
+  "q1_all_boxes": 80,
+  "q2_sorties": 18,
+  "q2_hard_ok": false,
+  "q3_direct_feasible": 0,
+  "q3_relay_feasible": 18,
+  "q3_final_infeasible": 0,
+  "q3_sorties": 18,
+  "q4_groups": [
+    2,
+    3
+  ],
+  "q4_peak_summary": {
+    "2": {
+      "baseline_peak_transport": 3,
+      "baseline_peak_relay": 3,
+      "baseline_violations": 2,
+      "adjusted_peak_transport": 2,
+      "adjusted_peak_relay": 2,
+      "adjusted_violations": 0
+    },
+    "3": {
+      "baseline_peak_transport": 3,
+      "baseline_peak_relay": 3,
+      "baseline_violations": 2,
+      "adjusted_peak_transport": 2,
+      "adjusted_peak_relay": 2,
+      "adjusted_violations": 0
+    }
+  },
+  "joint_plan_comparison": {
+    "A_original_baseline": {
+      "hard_tardy_boxes": 13,
+      "hard_tardy_sorties": 7,
+      "max_lateness_s": 4356.821687883178,
+      "total_lateness_s": 35379.21324928059,
+      "completion_time_s": 10128.488566108414,
+      "total_energy_kwh": 59.654457520309826,
+      "relay_peak": 4
+    },
+    "B_resource_adjusted": {
+      "hard_tardy_boxes": 22,
+      "hard_tardy_sorties": 11,
+      "max_lateness_s": 11436.19384370591,
+      "total_lateness_s": 135559.0987857019,
+      "completion_time_s": 17581.034724922953,
+      "total_energy_kwh": 59.654457520309826,
+      "relay_peak": 2
+    },
+    "C_joint_deadline_first": {
+      "hard_tardy_boxes": 26,
+      "hard_tardy_sorties": 13,
+      "max_lateness_s": 6540.095352375125,
+      "total_lateness_s": 106895.27753776823,
+      "completion_time_s": 17172.0813959778,
+      "total_energy_kwh": 59.65445752030983,
+      "relay_peak": 2
+    }
+  },
+  "baseline": true,
+  "note": "Minimal real-data chain; not globally optimized."
+}

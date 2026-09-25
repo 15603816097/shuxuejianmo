@@ -1,0 +1,2 @@
+﻿sortie,relay_id,component_id,hover_x,hover_y,hover_altitude_m,prepare_start,outbound_start,link_ready,service_start,service_end,return_start,return_end,turnaround_end,energy_kwh,strict_backhaul_margin_db,effective_backhaul_margin_db,communication_pass,scenario
+SENS19-011,R01,C01,109.22252777777778,23.06485555555556,347.8144226074219,5123.208873982598,5303.208873982598,5632.018161970086,5623.208873982598,7826.983631519628,7826.983631519628,8324.135788057734,8624.135788057734,0.3995768224199172,-0.0771202430435664,0.0228797569564336,True,FEASIBILITY_RESTORED_0P1DB

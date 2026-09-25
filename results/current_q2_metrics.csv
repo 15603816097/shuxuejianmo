@@ -1,0 +1,2 @@
+status,best_known_late_boxes,best_known_late_sorties,proven_optimal,transport_peak,relay_peak,battery_peak,service_peak,total_lateness,max_lateness,makespan,energy,source,tolerance_s
+BEST_KNOWN_FEASIBLE_NOT_PROVEN_OPTIMAL,11,6,False,2,2,5,2,558271.122743989,90070.22608864636,98357.06546659429,61.8195267932239,results/continuous_cap11_schedule.csv,1e-06

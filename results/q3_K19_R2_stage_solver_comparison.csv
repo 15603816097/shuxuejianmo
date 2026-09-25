@@ -1,0 +1,3 @@
+stage,objective_name,status,message,objective,lower_bound,upper_bound,mip_gap,runtime_s,variables,constraints,stage_label
+Q3_StageA_exact,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,0.9557240009307861,1185,2162,A_fixed_structure
+Q3_StageB_exact,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,2.1458020210266113,1185,2162,B_retype_fixed_batches

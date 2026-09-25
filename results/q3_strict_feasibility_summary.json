@@ -1,0 +1,13 @@
+{
+  "strict_complete_q3_feasible": false,
+  "strict_best_margin_dB": -0.0771202430435664,
+  "best_incoming_margin_dB": -0.0771202430435664,
+  "best_outgoing_margin_dB": -0.0771202430435664,
+  "minimum_required_link_budget_relaxation_dB": 0.077122,
+  "minimum_required_link_budget_relaxation_definition": "smallest tested delta with positive incoming and outgoing; strict positivity",
+  "scenario_file": "results/q3_link_budget_sensitivity_scenarios.csv",
+  "full_80_box_scheduling": "NOT_RUN_BY_REQUEST",
+  "pipeline_sha256": "5f5fc70d5ed19d36644cdad811b12bdac89d19f18393218c72fca28dae32afeb",
+  "minimum_required_link_budget_infimum_dB": 0.0771202430435664,
+  "first_strictly_positive_tested_delta_dB": 0.077122
+}

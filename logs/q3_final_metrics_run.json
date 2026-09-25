@@ -1,0 +1,8 @@
+{
+  "total": 18,
+  "direct": 0,
+  "relay_feasible": 18,
+  "final_infeasible": 0,
+  "relay_peak": 2,
+  "q2_q3_binding": "18/18"
+}

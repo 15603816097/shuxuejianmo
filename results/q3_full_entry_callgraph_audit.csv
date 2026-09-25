@@ -1,0 +1,7 @@
+stage,called_function,file,new_semantics,legacy_function_used
+StageC1,_build_stage_a,src/q3_reoptimize_from_q2.py,batch_order_only;resources_rebuilt_below,False
+StageC1,certify_task,src/q3_full_stageC1.py,interval_link_budget,False
+StageC1,relay_time_chain,src/q3_official_semantics.py,official_relay_time_chain,False
+StageC1,relay_component_ledger,src/q3_official_semantics.py,SOC_two_stage_charge,False
+StageC1,relay_ledgers,src/q3_full_stageC1.py,resource_gating,False
+StageC1,_evaluate,src/q3_reoptimize_from_q2.py,delivery_metrics_only,False

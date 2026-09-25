@@ -1,0 +1,13 @@
+﻿caller,callee,legacy,used_in_final
+src/q3_c1_final.py,q3_semantics_core,False,True
+src/q3_c2_final.py,q3_semantics_core,False,True
+src/q3_c3_final.py,q3_semantics_core,False,True
+src/q3_semantics_core.py,__future__,False,True
+src/q3_semantics_core.py,math,False,True
+src/q3_semantics_core.py,dataclasses,False,True
+src/q3_semantics_core.py,typing,False,True
+src/q3_semantics_core.py,numpy,False,True
+src/q3_semantics_core.py,minimal_pipeline,True,True
+src/q3_semantics_core.py,q3_official_semantics,True,True
+src/q3_semantics_core.py,q3_five_service_hover_refinement,True,True
+src/q3_semantics_core.py,q3_five_service_hover_refinement,True,True

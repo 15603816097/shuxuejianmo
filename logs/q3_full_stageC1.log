@@ -1,0 +1,7 @@
+{
+  "status": "DRY_RUN_ONLY",
+  "first_feasible_K": null,
+  "K_range": "18..30",
+  "dynamic_certificate": "interval distance bound + worst-case terrain penalty",
+  "C2_started": false
+}

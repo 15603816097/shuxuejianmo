@@ -1,0 +1,5 @@
+{
+  "mutation": "XY outside DEM domain",
+  "candidate_result_is_none": true,
+  "dem_legal": false
+}

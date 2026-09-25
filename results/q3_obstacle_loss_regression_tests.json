@@ -1,0 +1,21 @@
+{
+  "test_unobstructed_access": {
+    "obstructed": false,
+    "obstacle_loss_applied_db": 0.0,
+    "fspl_db": 103.56062937391802,
+    "path_loss_db": 103.56062937391802,
+    "threshold_db": 116.0,
+    "margin_db": 12.439370626081981,
+    "pass": true
+  },
+  "test_obstructed_backhaul": {
+    "obstructed": true,
+    "obstacle_loss_applied_db": 10.0,
+    "fspl_db": 116.07712024304419,
+    "path_loss_db": 126.07712024304419,
+    "threshold_db": 126.0,
+    "margin_db": -0.07712024304419174,
+    "pass": true
+  },
+  "all_pass": true
+}

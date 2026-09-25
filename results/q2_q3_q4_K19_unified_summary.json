@@ -1,0 +1,16 @@
+{
+  "schedule": "results/q2_sensitivity_19_27/q2_sens_K19_schedule.csv",
+  "q3": {
+    "direct": 0,
+    "relay": 19,
+    "infeasible": 0,
+    "binding": 19
+  },
+  "q4": {
+    "relay_peak": 7,
+    "transport_peak": 4,
+    "B_peak": 4,
+    "C_peak": 4,
+    "service_per_area": 1
+  }
+}

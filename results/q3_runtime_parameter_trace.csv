@@ -1,0 +1,28 @@
+parameter,runtime_value,caller_function,caller_file,source_workbook,source_sheet,source_field,load_timestamp_or_sequence,loaded_from_attachment,hardcoded_in_runtime_path
+衰落裕量（dB）,8.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,接收参数:衰落裕量（dB）,0,True,False
+系统损耗（dB）,3.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,传播参数:系统损耗（dB）,1,True,False
+载波频率（MHz）,2400.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,传播参数:载波频率（MHz）,2,True,False
+地形遮挡附加损耗（dB）,10.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,传播参数:地形遮挡附加损耗（dB）,4,True,False
+天线离地高度（m）,20.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,固定网关 G01:天线离地高度（m）,1028,True,False
+接收灵敏度（dBm）,-98.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,接收参数:接收灵敏度（dBm）,1029,True,False
+发射功率（dBm）,20.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,运输无人机:发射功率（dBm）,1032,True,False
+天线增益（dBi）,3.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,运输无人机:天线增益（dBi）,1033,True,False
+天线增益（dBi）,12.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,固定网关 G01:天线增益（dBi）,1034,True,False
+发射功率（dBm）,27.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,固定网关 G01:发射功率（dBm）,1035,True,False
+天线增益（dBi）,6.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,中继接入端:天线增益（dBi）,1040,True,False
+发射功率（dBm）,19.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,中继回传端:发射功率（dBm）,1041,True,False
+天线增益（dBi）,8.0,runtime dictionary access,src/q3_official_semantics.py,通信链路参数.xlsx,数据,中继回传端:天线增益（dBi）,1042,True,False
+prep_s,180.0,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,prep_s,15870,True,False
+link_s,30.0,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,link_s,15871,True,False
+turn_s,300.0,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,turn_s,15872,True,False
+hover_power_kw,1.05,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,hover_power_kw,15873,True,False
+comm_power_kw,0.05,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,comm_power_kw,15874,True,False
+power_kw,1.15,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,power_kw,15875,True,False
+speed,15.0,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,speed,15876,True,False
+climb_speed,4.0,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,climb_speed,15877,True,False
+descend_speed,3.0,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,descend_speed,15878,True,False
+eta_climb,0.72,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,eta_climb,15879,True,False
+eta_descend,0.0,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,eta_descend,15880,True,False
+energy_kwh,3.2,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,energy_kwh,15881,True,False
+component_inventory,6.0,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,component_inventory,15882,True,False
+component_full_charge_s,1800.0,runtime dictionary access,src/q3_official_semantics.py,中继无人机数据.xlsx,数据,component_full_charge_s,15883,True,False

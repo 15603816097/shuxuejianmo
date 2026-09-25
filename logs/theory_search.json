@@ -1,0 +1,77 @@
+API 请求失败 (HTTP 429): Too Many Requests
+{
+  "query": "vehicle routing drone delivery energy",
+  "cross_validated": [],
+  "openalex_only": [],
+  "anysearch_only": [
+    {
+      "title": "Impact of drone delivery on sustainability and cost: Realizing the UAV potential through vehicle routing optimization",
+      "authors": [
+        "Wen‐Chyuan Chiang",
+        "Yuyu Li",
+        "Jennifer S. Shang",
+        "et al."
+      ],
+      "year": 2019,
+      "citations": 393,
+      "doi": "10.1016/j.apenergy.2019.03.117",
+      "abstract": null,
+      "sources": [
+        "anysearch"
+      ],
+      "cross_validated": false,
+      "venue": null,
+      "volume": null,
+      "issue": null,
+      "pages": null,
+      "url": "https://doi.org/10.1016/j.apenergy.2019.03.117"
+    },
+    {
+      "title": "Truck-drone hybrid delivery routing: Payload-energy dependency and No-Fly zones",
+      "authors": [
+        "Ho Young Jeong",
+        "Byung Duk Song",
+        "Seokcheon Lee"
+      ],
+      "year": 2019,
+      "citations": 351,
+      "doi": "10.1016/j.ijpe.2019.01.010",
+      "abstract": null,
+      "sources": [
+        "anysearch"
+      ],
+      "cross_validated": false,
+      "venue": null,
+      "volume": null,
+      "issue": null,
+      "pages": null,
+      "url": "https://doi.org/10.1016/j.ijpe.2019.01.010"
+    },
+    {
+      "title": "Vehicle Routing Problems for Drone Delivery",
+      "authors": [],
+      "year": 2016,
+      "citations": 0,
+      "doi": "10.1109/tsmc.2016.2582745",
+      "abstract": null,
+      "sources": [
+        "anysearch"
+      ],
+      "cross_validated": false,
+      "venue": null,
+      "volume": null,
+      "issue": null,
+      "pages": null,
+      "url": "https://doi.org/10.1109/tsmc.2016.2582745"
+    }
+  ],
+  "stats": {
+    "openalex_total": 0,
+    "anysearch_total": 10,
+    "cross_validated": 0,
+    "openalex_unique": 0,
+    "anysearch_unique": 9,
+    "filtered_irrelevant": 1,
+    "collapsed_duplicates": 0
+  }
+}

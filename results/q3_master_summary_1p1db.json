@@ -1,0 +1,32 @@
+{
+  "master_status": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "ROUTE_LEVEL_BEST_FOUND_K": 23,
+  "selected_route_count": 23,
+  "covered_boxes": 80,
+  "hard_violations": 0,
+  "selected_candidates": [
+    "Q3V2-000214",
+    "Q3V2-000236",
+    "Q3V2-000258",
+    "Q3V2-006456",
+    "Q3V2-006742",
+    "Q3V2-007631",
+    "Q3V2-057841",
+    "Q3V2-057844",
+    "Q3V2-057855",
+    "Q3V2-057864",
+    "Q3V2-059226",
+    "Q3V2-060770",
+    "Q3V2-060780",
+    "Q3V2-060790",
+    "Q3V2-060791",
+    "Q3V2-061201",
+    "Q3V2-061223",
+    "Q3V2-061239",
+    "Q3V2-061255",
+    "Q3V2-061257",
+    "Q3V2-061283",
+    "Q3V2-061299",
+    "Q3V2-061307"
+  ]
+}

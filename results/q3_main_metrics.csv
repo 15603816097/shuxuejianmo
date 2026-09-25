@@ -1,0 +1,13 @@
+metric,value
+total_sorties,18
+service_areas,15
+direct_feasible,0
+relay_needed,18
+one_hop_relay_feasible,18
+final_infeasible,0
+all_path_pixel_certification_pass,True
+direct_failure_terrain_count,18
+direct_failure_signal_or_distance_count,0
+relay_inventory_R,2
+relay_observed_peak,2
+relay_resource_feasible,True

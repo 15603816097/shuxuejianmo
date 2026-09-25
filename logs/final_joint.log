@@ -1,0 +1,44 @@
+{
+  "baseline_global_relay_peak": 4,
+  "plans": {
+    "2": {
+      "solver_status": 0,
+      "success": true,
+      "mip_gap": 0.0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "start_max": 23830.440550724874,
+      "tardy_boxes": 14,
+      "tardy_sorties": 7
+    },
+    "3": {
+      "solver_status": 0,
+      "success": true,
+      "mip_gap": 0.0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "start_max": 19568.58967068972,
+      "tardy_boxes": 8,
+      "tardy_sorties": 4
+    },
+    "4": {
+      "solver_status": 0,
+      "success": true,
+      "mip_gap": 0.0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "start_max": 20111.041173414567,
+      "tardy_boxes": 4,
+      "tardy_sorties": 2
+    }
+  },
+  "final_resource_peaks": {
+    "battery_B": 3,
+    "battery_C": 3,
+    "relay_aircraft": 2,
+    "transport_aircraft": 2
+  },
+  "q2_tardy_boxes": 14,
+  "q3_direct": 0,
+  "q3_relay": 18,
+  "q3_infeasible": 0,
+  "p1": "FAIL",
+  "note": "MILP uses 60-second start grid; continuous Q3 certificate uses complete DEM-cell traversal with piecewise-constant cell elevation."
+}

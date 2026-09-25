@@ -1,0 +1,15 @@
+﻿gate,input,calculation,decision,evidence
+medical_hard_ok,representative S008-MED-01 B,True,True,q3_semantics_core.evaluate_route
+first_batch_hard_ok,representative S008-MED-01 B,True,True,q3_semantics_core.evaluate_route
+hard_deadline_ok,representative S008-MED-01 B,True,True,q3_semantics_core.evaluate_route
+TRANSPORT_FEASIBLE,representative S008-MED-01 B,True,True,q3_semantics_core.evaluate_route
+COMMUNICATION_GEOMETRY_PASS,representative S008-MED-01 B,False,False,q3_semantics_core.evaluate_route
+RELAY_CHAIN_PASS,representative S008-MED-01 B,False,False,q3_semantics_core.evaluate_route
+COMPONENT_PASS,representative S008-MED-01 B,False,False,q3_semantics_core.evaluate_route
+ROUTE_FEASIBLE,representative S008-MED-01 B,False,False,q3_semantics_core.evaluate_route
+transport_energy,O01->S008 climb,payload=3.0; energy=0.15252559352411726,RECORDED,transport_energy_ledger
+transport_energy,O01->S008 cruise,payload=3.0; energy=1.0088679802556186,RECORDED,transport_energy_ledger
+transport_energy,O01->S008 descent,payload=3.0; energy=0.07614245578302255,RECORDED,transport_energy_ledger
+transport_energy,S008->O01 climb,payload=0.0; energy=0.05982545657862506,RECORDED,transport_energy_ledger
+transport_energy,S008->O01 cruise,payload=0.0; energy=0.9511801535562173,RECORDED,transport_energy_ledger
+transport_energy,S008->O01 descent,payload=0.0; energy=0.17256962593710515,RECORDED,transport_energy_ledger

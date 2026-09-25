@@ -1,0 +1,3 @@
+plan,violations,sorties,total_lateness,max_lateness,completion,relay_peak,solver_status,mip_gap,objective
+grid60s_R2,14.0,7.0,,,,2.0,,,
+continuous_R2,,,,,,,2.0,,

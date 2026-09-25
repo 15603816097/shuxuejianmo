@@ -1,0 +1,28 @@
+{
+  "R": 2,
+  "tested_caps": [
+    13,
+    12,
+    11,
+    10
+  ],
+  "feasible_caps": [
+    13,
+    12,
+    11
+  ],
+  "best_feasible_cap": 11,
+  "last_status": 1,
+  "last_message": "Time limit reached. (HiGHS Status 13: model_status is Time limit reached; primal_status is None)",
+  "strictly_infeasible": false,
+  "objective": null,
+  "lower_bound": null,
+  "upper_bound": null,
+  "mip_gap": null,
+  "runtime_s": 120.00426840782166,
+  "node_count": null,
+  "same_event_model": true,
+  "only_new_constraint": "sum(late_b) <= cap",
+  "incumbent_14_boxes_feasible": true,
+  "proof": "No proof: lower caps remain unclassified."
+}

@@ -1,0 +1,8 @@
+{
+  "independent_certificate_pass": true,
+  "primitive_intervals": 549,
+  "los_rows": 149337,
+  "mutation_los_or_margin_fails": true,
+  "mutation_margin_fails": true,
+  "mutation_los_fails": true
+}

@@ -1,0 +1,2 @@
+K,hard_violation_boxes,hard_violation_sorties,soft_late_boxes,soft_total_lateness_s,soft_max_lateness_s,weighted_timeliness_penalty,makespan_s,transport_energy_kwh,B_sorties,C_sorties,single_point_sorties,multi_point_sorties,max_service_areas_per_sortie,sorties,boxes
+19,0,0,6,25505.98609375136,5619.8827108106,25505.98609375136,10825.75924500106,61.04704641755705,9,10,19,0,1,19,80

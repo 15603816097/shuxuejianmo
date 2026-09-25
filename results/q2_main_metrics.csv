@@ -1,0 +1,2 @@
+sorties,late_boxes,late_sorties,total_lateness_s,max_lateness_s,makespan_s,transport_flight_energy_kwh,relay_energy_kwh,total_energy_kwh,avg_boxes_per_sortie,max_boxes_per_sortie,B_sorties,C_sorties,status
+18,11,6,558271.122743989,90070.22608864636,98669.59708634084,59.65445752030984,2.165069272914068,61.81952679322391,4.444444444444445,8,9,9,BEST_KNOWN_FEASIBLE_NOT_PROVEN_OPTIMAL

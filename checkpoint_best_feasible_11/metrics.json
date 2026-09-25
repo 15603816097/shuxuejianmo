@@ -1,0 +1,16 @@
+{
+  "status": "BEST_KNOWN_FEASIBLE_NOT_PROVEN_OPTIMAL",
+  "best_known_late_boxes": 11,
+  "best_known_late_sorties": 6,
+  "proven_optimal": false,
+  "transport_peak": 2,
+  "relay_peak": 2,
+  "battery_peak": 5,
+  "service_peak": 2,
+  "total_lateness": 558271.122743989,
+  "max_lateness": 90070.22608864636,
+  "makespan": 98357.06546659429,
+  "energy": 61.8195267932239,
+  "source": "results/continuous_cap11_schedule.csv",
+  "tolerance_s": 1e-06
+}

@@ -1,0 +1,31 @@
+﻿semantic_id,official_rule,source_location,implementation_file,implementation_function,status,test_case
+A01,服务区集合为 O01 与 S001–S015,DOCX OMML 0–1,src/q3_semantics_core.py,build_authoritative_timeline,IMPLEMENTED_NOT_ENFORCED,test_route_nodes
+B01,货箱不可拆分，按箱分配到架次,DOCX text/附录数据,src/q3_semantics_core.py,build_authoritative_timeline,IMPLEMENTED_NOT_ENFORCED,test_unique_boxes
+B02,载质量、体积约束,DOCX 约束段,src/q3_semantics_core.py,status/route caller,PARTIAL,test_payload_volume
+C01,运输段由爬升、巡航、下降组成,OMML 12,src/q3_semantics_core.py,build_authoritative_timeline,IMPLEMENTED_NOT_ENFORCED,test_phase_chain
+C02,服务区作业高度=地面高程+30m,DOCX 多点轨迹规则,src/q3_semantics_core.py,build_authoritative_timeline,IMPLEMENTED_NOT_ENFORCED,test_multistop_reclimb
+C03,统一loading/departure/handoff/return时间轴,DOCX 时间约束,src/q3_semantics_core.py,build_authoritative_timeline,IMPLEMENTED_NOT_ENFORCED,test_loading_handoff
+D01,医疗物资期望送达时间为硬时限,DOCX 货箱时限,src/q3_semantics_core.py,deadline_ledger,IMPLEMENTED_NOT_ENFORCED,test_deadline_sources
+D02,首批保障货箱首批截止为硬时限,DOCX 货箱时限,src/q3_semantics_core.py,deadline_ledger,IMPLEMENTED_NOT_ENFORCED,test_deadline_sources
+D03,普通物资期望时间仅soft,DOCX 货箱时限,src/q3_semantics_core.py,deadline_ledger,IMPLEMENTED_NOT_ENFORCED,test_deadline_sources
+D04,delivery为逐箱handoff完成时刻,DOCX 交付定义,src/q3_semantics_core.py,deadline_ledger,IMPLEMENTED_NOT_ENFORCED,test_delivery_handoff
+E01,等效航程 Lg(q)=Lg0-(Lg0-LgF)(q/Qg)^(3/2),OMML 4,src/minimal_pipeline.py,energy_leg,IMPLEMENTED_NOT_ENFORCED,test_transport_energy
+E02,飞行时间含爬升、水平巡航、下降,OMML 12,src/minimal_pipeline.py,energy_leg,IMPLEMENTED_NOT_ENFORCED,test_phase_energy
+E03,运输能耗为水平与爬升能耗之和,OMML 23,src/minimal_pipeline.py,energy_leg,IMPLEMENTED_NOT_ENFORCED,test_transport_energy
+E04,返航安全余量 EpT≤(1-rho)Euse,OMML 27,src/q3_semantics_core.py,transport_energy_ledger,PARTIAL,test_reserve
+F01,两阶段充电公式,OMML 38,src/q3_official_semantics.py,component_charge_time,IMPLEMENTED_NOT_ENFORCED,test_component_charge
+G01,遮挡指示 bijt 由地形LOS决定,OMML 43,src/q3_official_semantics.py,_segment_cert,LEGACY_DEPENDENCY,test_continuous_los
+G02,双向允许损耗取两方向较小值,OMML 49–58,src/q3_official_semantics.py,dynamic_communication_audit,LEGACY_DEPENDENCY,test_bidirectional_budget
+G03,FSPL=32.45+20log f+20log D,OMML 62,src/q3_official_semantics.py,_loss_db,LEGACY_DEPENDENCY,test_fspl
+G04,路径损耗=FSPL+遮挡损耗,OMML 65,src/q3_official_semantics.py,_loss_db,LEGACY_DEPENDENCY,test_obstacle_loss
+G05,链路可用性按 Lpath≤Lmax,OMML 69,src/q3_semantics_core.py,direct_and_relay_blocks,LEGACY_DEPENDENCY,test_direct_relay
+G06,连续通信使用DEM primitive区间证书,DOCX通信规则/连续审计,src/q3_semantics_core.py,direct_and_relay_blocks,LEGACY_DEPENDENCY,test_continuous_coverage
+H01,直连优先，直连失败才需要relay,DOCX通信规则,src/q3_semantics_core.py,direct_and_relay_blocks,LEGACY_DEPENDENCY,test_direct_relay
+I01,relay含prepare/outbound/link/service/return/turnaround,DOCX中继时间链,src/q3_semantics_core.py,official_relay_energy/component_ledger,LEGACY_DEPENDENCY,test_relay_time_chain
+J01,relay能耗含往返飞行、悬停和通信附加功率,DOCX附录2/中继功耗,src/q3_semantics_core.py,official_relay_energy,LEGACY_DEPENDENCY,test_relay_energy
+K01,C01–C06能源组件独立于relay airframe,DOCX中继组件表,src/q3_semantics_core.py,component_ledger,IMPLEMENTED_NOT_ENFORCED,test_component_inventory
+K02,组件SOC、reserve、充电期间不可复用,DOCX组件/充电规则,src/q3_semantics_core.py,component_ledger,IMPLEMENTED_NOT_ENFORCED,test_component_charge
+L01,资源区间采用半开区间并检查重叠,DOCX资源约束,src/q3_semantics_core.py,resource_events,LEGACY_DEPENDENCY,test_resource_overlap
+M01,多点访问后逐箱交接并按剩余载荷继续飞行,DOCX多点运输规则,src/q3_semantics_core.py,build_authoritative_timeline,IMPLEMENTED_NOT_ENFORCED,test_multistop_reclimb
+N01,R01/R02允许接力，通信覆盖不得有hole,DOCX中继协同规则,src/q3_semantics_core.py,status,LEGACY_DEPENDENCY,test_relay_handoff
+O01,状态分离：transport/geometry/relay/component/route,DOCX目标与约束,src/q3_semantics_core.py,status,IMPLEMENTED_NOT_ENFORCED,test_status_separation

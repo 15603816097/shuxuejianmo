@@ -1,0 +1,8 @@
+{
+  "candidate_count": 473,
+  "single": 60,
+  "double": 315,
+  "triple": 98,
+  "frozen_sha256": "5f5fc70d5ed19d36644cdad811b12bdac89d19f18393218c72fca28dae32afeb",
+  "delta_backhaul_db": 0.1
+}

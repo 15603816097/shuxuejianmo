@@ -1,0 +1,14 @@
+{
+  "services": 15,
+  "candidate_total": 1845,
+  "candidate_rejections": 1210,
+  "new_reason_counts": {
+    "ACCESS_LINK_FAIL": 1087,
+    "ACCESS_AND_BACKHAUL_FAIL": 123
+  },
+  "old_unknown_rows": 2624,
+  "old_reason_counts": {
+    "OTHER_TRUE_UNKNOWN": 2624
+  },
+  "method": "independent grid+route-offset candidates; official dynamic trajectory; separate access/backhaul bounds; no strict_q3 call"
+}

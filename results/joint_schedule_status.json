@@ -1,0 +1,8 @@
+{
+  "status": "P1_FAIL",
+  "reason": "Q3 relay access is still a 33-point sweep rather than exact DEM-cell continuous certification; the joint scheduler is deterministic but does not prove zero deadline violations.",
+  "plan_A": "results/q2_q3_q4_plan_comparison.csv",
+  "plan_B": "results/q4_schedule_adjusted.csv",
+  "plan_C": "results/q_joint_schedule_C.csv",
+  "source_command": "PYTHONPATH=.deps python src/minimal_pipeline.py --seed 20260924"
+}

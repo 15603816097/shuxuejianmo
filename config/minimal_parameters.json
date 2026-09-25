@@ -1,0 +1,13 @@
+{
+  "seed": 20260924,
+  "status": "baseline_minimal_chain",
+  "dem_sample_spacing_m": 15,
+  "cruise_height_offset_m": 50,
+  "service_height_offset_m": 30,
+  "direct_link_frequency_mhz": 2400,
+  "direct_link_threshold_db": 122,
+  "obstruction_loss_db": 10,
+  "q4_group_candidates": [2, 3],
+  "model_change": false,
+  "note": "This runner preserves the confirmed formulas and is not the final optimizer."
+}

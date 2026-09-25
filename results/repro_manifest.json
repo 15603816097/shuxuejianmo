@@ -1,0 +1,104 @@
+{
+  "generated_at": "2026-09-24T23:13:25.127535",
+  "command": "PYTHONPATH=.deps python src/minimal_pipeline.py --seed 20260924",
+  "seed": 20260924,
+  "runtime": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "dependencies": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.3",
+    "scipy": "1.17.1"
+  },
+  "data_files": [
+    {
+      "path": "data/无人机应急物资运输基础数据/中继无人机数据.xlsx",
+      "sha256": "be52643ff29419233e6a141dca03a04160a8af551cab36d8c49b51bb836bea04",
+      "bytes": 11082
+    },
+    {
+      "path": "data/无人机应急物资运输基础数据/物资需求与配送时限.xlsx",
+      "sha256": "5a3346159ceddcf585859d270b8f62114b388a1f737fbe64ffde0ee1fdc8170a",
+      "bytes": 17474
+    },
+    {
+      "path": "data/无人机应急物资运输基础数据/调度中心与服务区.xlsx",
+      "sha256": "541a7af1ded08c9a3ff448480332cb5f6a54902f0afa6e9bcd50c1d2b2b34e38",
+      "bytes": 11017
+    },
+    {
+      "path": "data/无人机应急物资运输基础数据/运输无人机数据.xlsx",
+      "sha256": "9296a657c07e042afba6aeea7999665d9cd24e00b592fd6c269de6e338480dcb",
+      "bytes": 11746
+    },
+    {
+      "path": "data/无人机应急物资运输基础数据/通信链路参数.xlsx",
+      "sha256": "1860d153199e7ae460ba36e83b673374e640e19de91ea167f2877271001f5f81",
+      "bytes": 10485
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/数字高程模型数据（DEM）/镇龙乡及周边30米DEM.mat",
+      "sha256": "c68703e0cc8f94f4bd52ff6e9974b66a2dae33865f0723ad71c04b6694bf4fbf",
+      "bytes": 6746494
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/数字高程模型数据（DEM）/镇龙乡及周边30米DEM.tif",
+      "sha256": "741fe6de0b2bcaffd0f4007f574ee698d46197094f52cc954b532c4f90fc7c03",
+      "bytes": 7867096
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/村镇点位/镇龙乡及周边村镇点位.csv",
+      "sha256": "b6e2ffc0b728fb33c532e471b6f27dcb54ff70a9a2025546539eea97e5232d6f",
+      "bytes": 9569
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/村镇点位/镇龙乡及周边村镇点位.mat",
+      "sha256": "61419e92447ada38c56b7f64f04e4aada2eb1ed076ae33e95f1cbc69f3514beb",
+      "bytes": 119280
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/水体（面）/镇龙乡及周边水体.csv",
+      "sha256": "4d72a2b46d893701da635ac1b083539568ad3a8b9ffb1b28b09c06bf8af74324",
+      "bytes": 279146
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/水体（面）/镇龙乡及周边水体.mat",
+      "sha256": "b79df14bdc0b22811f5c219897a66775d8879a93c4a865e455d8c43ab099b50a",
+      "bytes": 179705
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/水系（线）/镇龙乡及周边水系.csv",
+      "sha256": "3502b997e000e8043e36b7159202bafb12a0c21d23a8b5ad4ec6877bad580a65",
+      "bytes": 297223
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/水系（线）/镇龙乡及周边水系.mat",
+      "sha256": "b89f4f294bf771962676009fa9044f46ef26a06613fb6f91e2c6f9ccd430f8e8",
+      "bytes": 179598
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/道路/镇龙乡及周边道路.csv",
+      "sha256": "adcd23b4ae2c28475412fc2c8a3c0504b2a293ac2ec25faa1da2fe3c3d063ebe",
+      "bytes": 1423481
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡及周边地理数据/道路/镇龙乡及周边道路.mat",
+      "sha256": "c868717284d8aee60157e3bc9b20e18a81b26fde3d75fc7d80317ef877af9849",
+      "bytes": 399882
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡地理空间数据说明.pdf",
+      "sha256": "6d1522c6832a5d91a108dae0d07954845025c0dabd44af8ee78c7860d7c405e4",
+      "bytes": 85812
+    },
+    {
+      "path": "data/镇龙乡地理空间数据/镇龙乡地理空间详情地图.html",
+      "sha256": "5bb8082f4f5913e6787f86fa9dd3b6f8cbcfa309359f222f57355d1ae991b452",
+      "bytes": 4701273
+    }
+  ],
+  "code_files": [
+    {
+      "path": "src/minimal_pipeline.py",
+      "sha256": "048b8e143e60ba1c59b75bda65fbf848d11a6eb004598cd97e2e840d8745ad74"
+    }
+  ]
+}

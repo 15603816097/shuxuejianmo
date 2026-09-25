@@ -1,0 +1,11 @@
+sortie,selected_relay,final_relay,ledger_relay,selected_component,final_component,ledger_component,selected_busy_start,final_busy_start,ledger_busy_start,selected_busy_end,final_busy_end,ledger_busy_end,consistent
+K28-001,R01,R01,,,,,,,,,,,True
+K28-003,R01,R01,,,,,,,,,,,True
+K28-010,R01,R01,R01,R-E01,R-E01,R-E01,1258.9426082713912,1258.9426082713912,1258.9426082713912,3776.1528744350576,3776.1528744350576,3776.1528744350576,True
+K28-015,R01,R01,,,,,,,,,,,True
+K28-016,R01,R01,,,,,,,,,,,True
+K28-017,R01,R01,,,,,,,,,,,True
+K28-018,R01,R01,,,,,,,,,,,True
+K28-019,R01,R01,,,,,,,,,,,True
+K28-024,R01,R01,R01,R-E02,R-E02,R-E02,5824.92027343335,5824.92027343335,5824.92027343335,8342.130539597016,8342.130539597016,8342.130539597016,True
+K28-026,R01,R01,,,,,,,,,,,True

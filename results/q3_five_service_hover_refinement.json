@@ -1,0 +1,82 @@
+{
+  "targets": [
+    "S002",
+    "S003",
+    "S004",
+    "S008",
+    "S012"
+  ],
+  "summary": [
+    {
+      "service_area": "S002",
+      "coarse_candidate_count": 1344,
+      "refined_candidate_count": 1500,
+      "candidate_count": 2844,
+      "relay_candidate_found": true,
+      "best_access_margin": 0.9371718265418991,
+      "best_backhaul_margin": 0.889490729305848,
+      "best_joint_margin": 0.889490729305848,
+      "best_altitude": 255.50328063964844,
+      "best_relay_energy_ok": true,
+      "search_area": "expanded bbox + route offsets + service mesh + top30 local 5x5x3",
+      "altitude_range_m": "50.0..300.0 above DEM"
+    },
+    {
+      "service_area": "S003",
+      "coarse_candidate_count": 1344,
+      "refined_candidate_count": 1500,
+      "candidate_count": 2844,
+      "relay_candidate_found": true,
+      "best_access_margin": 1.0914797765105817,
+      "best_backhaul_margin": 1.0861836629705266,
+      "best_joint_margin": 1.0861836629705266,
+      "best_altitude": 454.1606140136719,
+      "best_relay_energy_ok": true,
+      "search_area": "expanded bbox + route offsets + service mesh + top30 local 5x5x3",
+      "altitude_range_m": "50.0..300.0 above DEM"
+    },
+    {
+      "service_area": "S004",
+      "coarse_candidate_count": 1344,
+      "refined_candidate_count": 1575,
+      "candidate_count": 2919,
+      "relay_candidate_found": true,
+      "best_access_margin": 0.30472693866575185,
+      "best_backhaul_margin": 0.5866154823125527,
+      "best_joint_margin": 0.30472693866575185,
+      "best_altitude": 395.49169921875,
+      "best_relay_energy_ok": true,
+      "search_area": "expanded bbox + route offsets + service mesh + top30 local 5x5x3",
+      "altitude_range_m": "50.0..300.0 above DEM"
+    },
+    {
+      "service_area": "S008",
+      "coarse_candidate_count": 1344,
+      "refined_candidate_count": 1500,
+      "candidate_count": 2844,
+      "relay_candidate_found": false,
+      "best_access_margin": -0.4417427993802221,
+      "best_backhaul_margin": 0.3310224197653753,
+      "best_joint_margin": -0.4417427993802221,
+      "best_altitude": 365.32928466796875,
+      "best_relay_energy_ok": true,
+      "search_area": "expanded bbox + route offsets + service mesh + top30 local 5x5x3",
+      "altitude_range_m": "50.0..300.0 above DEM"
+    },
+    {
+      "service_area": "S012",
+      "coarse_candidate_count": 1344,
+      "refined_candidate_count": 1500,
+      "candidate_count": 2844,
+      "relay_candidate_found": true,
+      "best_access_margin": 1.0763332758882882,
+      "best_backhaul_margin": 0.8961599655523003,
+      "best_joint_margin": 0.8961599655523003,
+      "best_altitude": 371.9935302734375,
+      "best_relay_energy_ok": true,
+      "search_area": "expanded bbox + route offsets + service mesh + top30 local 5x5x3",
+      "altitude_range_m": "50.0..300.0 above DEM"
+    }
+  ],
+  "method": "independent access/backhaul analytic bound; no strict_q3 call"
+}

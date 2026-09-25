@@ -1,0 +1,6 @@
+﻿service_area,coarse_candidate_count,refined_candidate_count,candidate_count,relay_candidate_found,best_access_margin,best_backhaul_margin,best_joint_margin,best_altitude,best_relay_energy_ok,search_area,altitude_range_m
+S002,1344,1500,2844,True,0.9371718265418991,0.889490729305848,0.889490729305848,255.50328063964844,True,expanded bbox + route offsets + service mesh + top30 local 5x5x3,50.0..300.0 above DEM
+S003,1344,1500,2844,True,1.0914797765105817,1.0861836629705266,1.0861836629705266,454.1606140136719,True,expanded bbox + route offsets + service mesh + top30 local 5x5x3,50.0..300.0 above DEM
+S004,1344,1575,2919,True,0.30472693866575185,0.5866154823125527,0.30472693866575185,395.49169921875,True,expanded bbox + route offsets + service mesh + top30 local 5x5x3,50.0..300.0 above DEM
+S008,1344,1500,2844,False,-0.4417427993802221,0.3310224197653753,-0.4417427993802221,365.32928466796875,True,expanded bbox + route offsets + service mesh + top30 local 5x5x3,50.0..300.0 above DEM
+S012,1344,1500,2844,True,1.0763332758882882,0.8961599655523003,0.8961599655523003,371.9935302734375,True,expanded bbox + route offsets + service mesh + top30 local 5x5x3,50.0..300.0 above DEM

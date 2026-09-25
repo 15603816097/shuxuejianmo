@@ -1,0 +1,20 @@
+{
+  "stage": "K18_zero_hard",
+  "objective_name": "zero",
+  "status": 0,
+  "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "objective": 0.0,
+  "lower_bound": 0.0,
+  "upper_bound": 0.0,
+  "mip_gap": 0.0,
+  "runtime_s": 0.7605640888214111,
+  "variables": 741,
+  "constraints": 1325,
+  "solver_status_code": 0,
+  "solver_status": "OPTIMAL",
+  "node_count": 177,
+  "primal_bound": 0.0,
+  "dual_bound": 0.0,
+  "strict_infeasible": false,
+  "q3_relay_in_constraints": false
+}

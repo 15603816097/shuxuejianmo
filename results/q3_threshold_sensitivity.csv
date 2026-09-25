@@ -1,0 +1,4 @@
+threshold_shift_db,direct_feasible,relay_feasible,infeasible,experiment
+-3.0,0,11,7,communication threshold sensitivity only
+0.0,0,18,0,communication threshold sensitivity only
+3.0,0,18,0,communication threshold sensitivity only

@@ -1,0 +1,1 @@
+﻿from_node,to_node,drone_type,relay_required_duration_s,pointwise_sample_count,nonpositive_sample_count,worst_best_joint_margin,communication_edge_possible,best_access_margin,best_backhaul_margin,direction

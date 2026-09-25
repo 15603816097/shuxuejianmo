@@ -1,0 +1,20 @@
+resource,inventory,observed_peak,feasible,inventory_basis
+transport_aircraft,8,2,True,
+relay,2,2,True,
+battery_B,4,3,True,
+battery_C,4,2,True,
+service:S001,1,1,True,per-service capacity assumption from current model
+service:S002,1,1,True,per-service capacity assumption from current model
+service:S003,1,1,True,per-service capacity assumption from current model
+service:S004,1,1,True,per-service capacity assumption from current model
+service:S005,1,1,True,per-service capacity assumption from current model
+service:S006,1,1,True,per-service capacity assumption from current model
+service:S007,1,1,True,per-service capacity assumption from current model
+service:S008,1,1,True,per-service capacity assumption from current model
+service:S009,1,1,True,per-service capacity assumption from current model
+service:S010,1,1,True,per-service capacity assumption from current model
+service:S011,1,1,True,per-service capacity assumption from current model
+service:S012,1,1,True,per-service capacity assumption from current model
+service:S013,1,1,True,per-service capacity assumption from current model
+service:S014,1,1,True,per-service capacity assumption from current model
+service:S015,1,1,True,per-service capacity assumption from current model

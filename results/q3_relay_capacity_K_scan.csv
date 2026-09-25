@@ -1,0 +1,9 @@
+stage,objective_name,status,message,objective,lower_bound,upper_bound,mip_gap,runtime_s,variables,constraints,K
+Q3_K20,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,1.017867088317871,1296,2369,20
+Q3_K21,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,0.6573114395141602,1413,2588,21
+Q3_K22,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,1.1289453506469727,1538,2823,22
+Q3_K23,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,0.9882354736328125,1671,3074,23
+Q3_K24,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,1.0822582244873047,1813,3343,24
+Q3_K25,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,1.487687349319458,1963,3628,25
+Q3_K26,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,1.935049295425415,2120,3927,26
+Q3_K27,zero,2,The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None),,,,,1.6966676712036133,2285,4242,27

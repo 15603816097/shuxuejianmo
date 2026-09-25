@@ -1,0 +1,5 @@
+stage,objective_name,status,message,objective,lower_bound,upper_bound,mip_gap,runtime_s,variables,constraints,violation_cap,strictly_infeasible,node_count,elapsed_wall_s
+cap13,cap,0,Optimization terminated successfully. (HiGHS Status 7: Optimal),0.0,0.0,0.0,0.0,6.802073955535889,1083,1955,13,False,1132.0,7.018564224243164
+cap12,cap,0,Optimization terminated successfully. (HiGHS Status 7: Optimal),0.0,0.0,0.0,0.0,8.73995041847229,1083,1955,12,False,1965.0,8.94663381576538
+cap11,cap,0,Optimization terminated successfully. (HiGHS Status 7: Optimal),0.0,0.0,0.0,0.0,7.256012678146362,1083,1955,11,False,2086.0,7.459848403930664
+cap10,cap,1,Time limit reached. (HiGHS Status 13: model_status is Time limit reached; primal_status is None),,,,,120.00426840782166,1083,1955,10,False,,120.21627473831177

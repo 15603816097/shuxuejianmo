@@ -1,0 +1,40 @@
+﻿{
+  "route": "O01->S008->O01",
+  "frozen_pipeline_sha256": "1174d8bd1169c72dc253c2025eab5c7c71bb23ca4d2e251711bcac668319c668",
+  "block1_primitive_count": 1,
+  "block1_individually_feasible_count": 0,
+  "block1_min_best_joint_margin": -6.213629794260157,
+  "block4_primitive_count": 1,
+  "block4_individually_feasible_count": 0,
+  "block4_min_best_joint_margin": -6.213629794260157,
+  "intrinsically_uncovered_interval": true,
+  "failed_intervals": [
+    {
+      "interval_id": "B1-P1",
+      "block_id": 1,
+      "start_time": 411.7364440917969,
+      "end_time": 952.3754238124606,
+      "best_access_margin": -6.213629794260157,
+      "best_backhaul_margin": 3.771676167306211,
+      "best_joint_margin": -6.213629794260157
+    },
+    {
+      "interval_id": "B4-P1",
+      "block_id": 4,
+      "start_time": 1057.1822674810803,
+      "end_time": 1597.8063757169753,
+      "best_access_margin": -6.213629794260157,
+      "best_backhaul_margin": 3.771676167306211,
+      "best_joint_margin": -6.213629794260157
+    }
+  ],
+  "segmented_static_hover_cover_possible": false,
+  "subblock_count": 0,
+  "relay_count": 0,
+  "handoff_count": 0,
+  "communication_holes": 2,
+  "relay_energy": "NOT_EVALUATED_AFTER_INTERVAL_GEOMETRY_FAIL",
+  "component_ok": "NOT_EVALUATED",
+  "route_feasible": false,
+  "stop_reason": "At least one primitive interval has no positive-margin legal static hover; relay chain not constructed."
+}

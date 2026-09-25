@@ -1,0 +1,2 @@
+﻿candidate_count,x_range,y_range,altitude_levels,dem_coverage_ratio,generation_method,possible_search_gap
+9,"route fractions 0.25,0.50,0.75","route fractions 0.25,0.50,0.75","base+100,base+200,base+300 m",,fixed route-fraction points x 3 altitude offsets,YES: no continuous XY coverage; no full-area enumeration

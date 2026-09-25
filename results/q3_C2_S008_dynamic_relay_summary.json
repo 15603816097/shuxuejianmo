@@ -1,0 +1,18 @@
+{
+  "route": "O01->S011->S008->O01",
+  "authoritative_timeline_pass": true,
+  "component_ledger_pass": true,
+  "seamless_handoff_pass": false,
+  "climb_descent_candidate_generation_pass": true,
+  "route_communication_pass": false,
+  "route_feasible": false,
+  "hard_deadline_ok": true,
+  "relay_required_blocks": 4,
+  "feasible_blocks": 0,
+  "communication_holes": 4,
+  "min_joint_margin": -6.213629794260157,
+  "relay_airframe_peak": 2,
+  "component_peak": 4,
+  "box_count": 8,
+  "delivery_count": 8
+}

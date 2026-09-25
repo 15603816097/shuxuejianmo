@@ -1,0 +1,19 @@
+{
+  "stage": "B",
+  "solver": {
+    "stage": "Q3_StageB_exact",
+    "objective_name": "zero",
+    "status": 2,
+    "message": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)",
+    "objective": null,
+    "lower_bound": null,
+    "upper_bound": null,
+    "mip_gap": null,
+    "runtime_s": 2.1458020210266113,
+    "variables": 1185,
+    "constraints": 2162,
+    "stage_label": "B_retype_fixed_batches"
+  },
+  "task_structure": "K19_fixed_service_box_batches_type_reassignment",
+  "proven_optimal": false
+}

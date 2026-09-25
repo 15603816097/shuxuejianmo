@@ -1,0 +1,7 @@
+resource,inventory,observed_peak,feasible
+relay,2,7,False
+transport,8,4,True
+B_battery,4,4,True
+C_battery,4,4,True
+service_global_diagnostic,15,3,True
+service_per_area_max,1,1,True

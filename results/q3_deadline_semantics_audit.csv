@@ -1,0 +1,25 @@
+box_id,deadline,delivery_time,sortie_return_time,resource_release_time,current_constraint_time_variable,correct_time_variable
+S007-MED-01,3600.0,3458.7594931080507,4018.557812801536,4018.557812801536,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S007-WAT-01,3600.0,3458.7594931080507,4018.557812801536,4018.557812801536,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S010-MED-01,3600.0,1084.8348215935089,1554.5963098536845,1554.5963098536845,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S010-WAT-01,3600.0,1084.8348215935089,1554.5963098536845,1554.5963098536845,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S012-MED-01,3600.0,1271.8746695035416,1923.889339007083,1923.889339007083,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S012-WAT-01,3600.0,1271.8746695035416,1923.889339007083,1923.889339007083,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S013-MED-01,3600.0,2617.349918549454,3065.036860578557,3065.036860578557,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S013-WAT-01,3600.0,2617.349918549454,3065.036860578557,3065.036860578557,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S014-MED-01,3600.0,3165.740841018609,3792.4790096968018,3792.4790096968018,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S014-WAT-01,3600.0,3165.740841018609,3792.4790096968018,3792.4790096968018,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S003-MED-01,7200.0,4832.719918175042,5623.208873982598,5623.208873982598,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S003-WAT-01,7200.0,4832.719918175042,5623.208873982598,5623.208873982598,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S004-MED-01,7200.0,6236.449204107764,6956.073192148747,6956.073192148747,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S004-WAT-01,7200.0,6236.449204107764,6956.073192148747,6956.073192148747,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S008-MED-01,7200.0,7122.936252751113,7826.983631519628,7826.983631519628,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S008-WAT-01,7200.0,7122.936252751113,7826.983631519628,7826.983631519628,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S015-MED-01,7200.0,4283.289983390553,4894.663106202548,4894.663106202548,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S015-WAT-01,10800.0,4283.289983390553,4894.663106202548,4894.663106202548,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S005-MED-01,10800.0,8330.731152116838,8836.119112084927,8836.119112084927,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S005-WAT-01,10800.0,8330.731152116838,8836.119112084927,8836.119112084927,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S009-MED-01,10800.0,4884.470390297258,5353.281770897713,5353.281770897713,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S009-WAT-01,10800.0,4884.470390297258,5353.281770897713,5353.281770897713,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S011-MED-01,10800.0,5801.667554515361,6084.298669494842,6084.298669494842,delivery_s via s_i + delivery_offset,delivery_time_at_service_area
+S011-WAT-01,10800.0,5801.667554515361,6084.298669494842,6084.298669494842,delivery_s via s_i + delivery_offset,delivery_time_at_service_area

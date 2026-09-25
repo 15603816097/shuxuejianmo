@@ -1,0 +1,9 @@
+﻿iteration,candidate_count_after_filter,selected_route_count,selected_unique_edges,cached_edges,new_edges_recomputed,new_failed_edges,all_selected_edges_certified,status
+1,57429,23,26,30,2,2,False,REPEAT
+2,56373,23,27,33,3,2,False,REPEAT
+3,55323,23,28,37,4,2,False,REPEAT
+4,54374,23,28,41,4,3,False,REPEAT
+5,53230,23,26,43,2,2,False,REPEAT
+6,52448,23,29,47,4,2,False,REPEAT
+7,51925,25,27,50,3,2,False,REPEAT
+8,51761,19,24,50,0,0,True,CERTIFIED

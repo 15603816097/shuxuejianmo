@@ -1,0 +1,2 @@
+﻿primitive_interval,time_start,time_end,phase,transport_start_xyz,transport_end_xyz,relay_xyz,dem_obstruction_state,distance_m,fspl_db,obstacle_loss_db,access_threshold_db,access_margin_db
+0,361.1326165853512,362.1901777624435,cruise,"[11178784.035733096, 2562274.411325756, 372.9093322753906]","[11178780.411059113, 2562289.8550869, 372.9093322753906]","[11178313.531111835, 2564302.69320641, 330.2303819725127]",worst_case_obstacle_loss_applied,2082.5761639893603,106.42624270203127,10.0,116.0,-0.42624270203127423

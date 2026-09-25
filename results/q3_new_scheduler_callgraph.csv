@@ -1,0 +1,4 @@
+stage,called_function,file,new_semantics,legacy_generator_used_as_final_decision
+K19_new,new_schedule,src/q3_new_scheduler.py,True,False
+K19_new,relay_time_chain,src/q3_official_semantics.py,True,False
+K19_new,relay_component_ledger,src/q3_official_semantics.py,True,False

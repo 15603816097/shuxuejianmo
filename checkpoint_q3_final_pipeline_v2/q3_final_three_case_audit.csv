@@ -1,0 +1,4 @@
+﻿case,route,box_count,drone_type,hard_deadline_ok,transport_energy_kwh,remaining_energy_kwh,required_reserve_kwh,relay_blocks,dem_legal,geometry_pass,relay_status,relay_energy_kwh,relay_ok,component_status,component_ok,relay_resource_status,route_feasible,soft_lateness_s
+A_SINGLE_SIMPLE,O01->S001->O01,1,B,True,0.9405906770622312,3.0594093229377686,3.2,0,True,True,NOT_REQUIRED,0.0,True,True,True,NOT_REQUIRED,True,0
+B_S008_DIFFICULT,O01->S011->S008->O01,8,C,True,6.377504024520855,1.6224959754791453,6.4,4,True,True,EVALUATED,,True,True,True,EVALUATED,True,0
+C_THREE_POINT,O01->S005->S008->S009->O01,3,B,True,2.959439427102586,1.040560572897414,3.2,10,True,True,EVALUATED,,False,False,False,EVALUATED,False,0

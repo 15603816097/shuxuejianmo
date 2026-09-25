@@ -1,0 +1,11 @@
+metric,value
+sorties,19.0
+hard_violation_boxes,0.0
+soft_late_boxes,6.0
+makespan_s,10825.75924500106
+transport_peak,4.0
+relay_peak,7.0
+B_battery_peak,4.0
+C_battery_peak,4.0
+service_peak_global,3.0
+service_peak_per_area,1.0

@@ -1,0 +1,41 @@
+﻿{
+  "route": "O01->S008->O01",
+  "box_set": [
+    "S008-MED-01"
+  ],
+  "drone_type": "B",
+  "dt_initial_s": 5,
+  "candidate_space_count": 28611,
+  "pipeline_sha256": "1174d8bd1169c72dc253c2025eab5c7c71bb23ca4d2e251711bcac668319c668",
+  "block1": {
+    "time_sample_count": 542,
+    "positive_margin_count": 510,
+    "nonpositive_margin_count": 32,
+    "minimum_of_best_joint_margin": -0.07712024304356646,
+    "maximum_of_best_joint_margin": 20.167043345800295,
+    "pointwise_coverage_possible": false,
+    "failed_ranges": [
+      {
+        "start": 921.7364440917969,
+        "end": 952.3754238124606
+      }
+    ]
+  },
+  "block4": {
+    "time_sample_count": 542,
+    "positive_margin_count": 510,
+    "nonpositive_margin_count": 32,
+    "minimum_of_best_joint_margin": -0.07712024304356646,
+    "maximum_of_best_joint_margin": 20.167043345800295,
+    "pointwise_coverage_possible": false,
+    "failed_ranges": [
+      {
+        "start": 1057.1822674810803,
+        "end": 1088.1822674810803
+      }
+    ]
+  },
+  "pointwise_coverage_possible": false,
+  "static_interval_coverage_evaluated": false,
+  "route_feasible": false
+}
