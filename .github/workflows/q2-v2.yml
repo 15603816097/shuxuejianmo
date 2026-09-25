@@ -22,7 +22,7 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: pip install numpy pandas scipy openpyxl ortools h5py
       - name: Run Q2-v2 7000 feasibility and makespan search
-        run: python src/q2_v2_solver.py --target 7000 --time-limit 240 --triple-limit 900
+        run: python src/q2_v2_solver.py --target 7000 --time-limit 360 --triple-limit 900
       - uses: actions/upload-artifact@v4
         if: always()
         with:
