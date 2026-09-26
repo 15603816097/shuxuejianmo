@@ -1,0 +1,44 @@
+name: q3-relay-friendly-search
+
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - src/q3_relay_friendly_baselines.py
+      - .github/workflows/q3-relay-friendly-search.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  search:
+    strategy:
+      fail-fast: false
+      matrix:
+        k: [20, 21, 22, 23, 24]
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Build relay-friendly baseline
+        run: python src/q3_relay_friendly_baselines.py --k ${{ matrix.k }}
+      - name: Build strict 1596 hover hypergraph
+        run: |
+          python src/q3_hover_hypergraph.py             --schedule "results/q3_relay_friendly/RF${{ matrix.k }}.csv"             --label "RF${{ matrix.k }}"             --out results/q3_relay_friendly_hg
+      - name: Test exactly four relay sorties with flexible positions
+        run: |
+          python src/q3_flexible_four_sorties.py             --schedule "results/q3_relay_friendly/RF${{ matrix.k }}.csv"             --hypergraph "results/q3_relay_friendly_hg/RF${{ matrix.k }}"             --label "RF${{ matrix.k }}"             --out results/q3_relay_friendly_four
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-relay-friendly-RF${{ matrix.k }}
+          path: |
+            results/q3_relay_friendly/
+            results/q3_relay_friendly_hg/RF${{ matrix.k }}/
+            results/q3_relay_friendly_four/
