@@ -1,0 +1,38 @@
+name: q3-friend-style-baselines
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - 'src/q3_friend_baselines.py'
+      - '.github/workflows/q3-friend-style-baselines.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hypergraph:
+    strategy:
+      fail-fast: false
+      matrix:
+        label: [K31, K18, K19A, K19B, K20, K23]
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Build friend-style transport baseline
+        run: python src/q3_friend_baselines.py --label ${{ matrix.label }}
+      - name: Build strict 1596-position hover hypergraph
+        run: python src/q3_hover_hypergraph.py --schedule results/q3_friend_baselines/${{ matrix.label }}.csv --label friend-${{ matrix.label }} --out results/q3_friend_hypergraph
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-friend-style-${{ matrix.label }}
+          path: |
+            results/q3_friend_baselines/
+            results/q3_friend_hypergraph/friend-${{ matrix.label }}/
