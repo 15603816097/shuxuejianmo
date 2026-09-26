@@ -1,34 +1,47 @@
 name: q3-friend-wave-screen
+
 on:
   push:
-    branches: [chatgpt-architecture]
+    branches:
+      - chatgpt-architecture
     paths:
-      - 'src/q3_friend_wave_screen.py'
-      - '.github/workflows/q3-friend-wave-screen.yml'
+      - src/q3_friend_wave_screen.py
+      - .github/workflows/q3-friend-wave-screen.yml
   workflow_dispatch:
+
 permissions:
   contents: read
   actions: read
+
 jobs:
   screen:
     strategy:
       fail-fast: false
       matrix:
-        label: [K31, K18, K19A, K19B, K20, K23]
+        label:
+          - K31
+          - K18
+          - K19A
+          - K19B
+          - K20
+          - K23
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: {python-version: '3.11'}
+        with:
+          python-version: '3.11'
       - run: pip install numpy pandas scipy openpyxl ortools h5py
-      - name: Download baseline+hypergraph
-        env: {GH_TOKEN: ${{ github.token }}}
+      - name: Download baseline and hypergraph
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p /tmp/in
-          gh run download 36233921280 -n q3-friend-style-${{ matrix.label }} -D /tmp/in
+          gh run download 36233921280 -n "q3-friend-style-${{ matrix.label }}" -D /tmp/in
       - name: Screen explicit relay waves
-        run: python src/q3_friend_wave_screen.py --schedule /tmp/in/q3_friend_baselines/${{ matrix.label }}.csv --hypergraph /tmp/in/q3_friend_hypergraph/friend-${{ matrix.label }} --label ${{ matrix.label }}
+        run: |
+          python src/q3_friend_wave_screen.py             --schedule "/tmp/in/q3_friend_baselines/${{ matrix.label }}.csv"             --hypergraph "/tmp/in/q3_friend_hypergraph/friend-${{ matrix.label }}"             --label "${{ matrix.label }}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
