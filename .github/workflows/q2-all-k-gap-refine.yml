@@ -1,0 +1,66 @@
+name: q2-all-k-gap-refine
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - 'src/q2_fixed_k_gap_refine.py'
+      - '.github/workflows/q2-all-k-gap-refine.yml'
+  workflow_dispatch:
+
+jobs:
+  refine:
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        k: [18, 19, 20, 21, 23, 24, 25, 26]
+        seed: [3, 11]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --upgrade pip
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Resolve incumbent source
+        id: src
+        shell: bash
+        run: |
+          K=${{ matrix.k }}
+          case "$K" in
+            18) echo "run=36180200237" >> "$GITHUB_OUTPUT"; echo "artifact=q2-k18-zero-lateness-cert-results" >> "$GITHUB_OUTPUT"; echo "ub=9161.5" >> "$GITHUB_OUTPUT" ;;
+            19) echo "run=36178376286" >> "$GITHUB_OUTPUT"; echo "artifact=q2-k19-lexicographic-results" >> "$GITHUB_OUTPUT"; echo "ub=8656.6" >> "$GITHUB_OUTPUT" ;;
+            20) echo "run=36176725410" >> "$GITHUB_OUTPUT"; echo "artifact=q2-k20-lexicographic-results" >> "$GITHUB_OUTPUT"; echo "ub=8453.7" >> "$GITHUB_OUTPUT" ;;
+            21) echo "run=36176725410" >> "$GITHUB_OUTPUT"; echo "artifact=q2-k21-lexicographic-results" >> "$GITHUB_OUTPUT"; echo "ub=7857.9" >> "$GITHUB_OUTPUT" ;;
+            23) echo "run=36176725410" >> "$GITHUB_OUTPUT"; echo "artifact=q2-k23-lexicographic-results" >> "$GITHUB_OUTPUT"; echo "ub=8190.2" >> "$GITHUB_OUTPUT" ;;
+            24) echo "run=36176725410" >> "$GITHUB_OUTPUT"; echo "artifact=q2-k24-lexicographic-results" >> "$GITHUB_OUTPUT"; echo "ub=6531.8" >> "$GITHUB_OUTPUT" ;;
+            25) echo "run=36175355270" >> "$GITHUB_OUTPUT"; echo "artifact=q2-lexicographic-lateness-results" >> "$GITHUB_OUTPUT"; echo "ub=6043.8" >> "$GITHUB_OUTPUT" ;;
+            26) echo "run=36176725410" >> "$GITHUB_OUTPUT"; echo "artifact=q2-k26-lexicographic-results" >> "$GITHUB_OUTPUT"; echo "ub=6240.5" >> "$GITHUB_OUTPUT" ;;
+          esac
+      - name: Download incumbent schedule
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          mkdir -p /tmp/hint
+          gh run download "${{ steps.src.outputs.run }}"             -n "${{ steps.src.outputs.artifact }}"             -D /tmp/hint
+          HINT="$(find /tmp/hint -path '*/phase2_min_makespan/schedule.csv' | head -1)"
+          if [ -z "$HINT" ]; then HINT="$(find /tmp/hint -name schedule.csv | head -1)"; fi
+          test -n "$HINT"
+          echo "HINT=$HINT" >> "$GITHUB_ENV"
+      - name: Refine/prove fixed K
+        run: >
+          python src/q2_fixed_k_gap_refine.py
+          --k ${{ matrix.k }}
+          --seed ${{ matrix.seed }}
+          --time-limit 1200
+          --upper-bound ${{ steps.src.outputs.ub }}
+          --hint-csv "$HINT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q2-gap-K${{ matrix.k }}-seed-${{ matrix.seed }}
+          path: results/q2_v2/gap_refine/K${{ matrix.k }}/seed_${{ matrix.seed }}/
