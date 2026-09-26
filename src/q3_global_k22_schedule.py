@@ -165,66 +165,115 @@ def main():
             y[bi,pidx]=z; opts.append(z)
         m.Add(sum(opts)==1)
 
-    service_start=[]; service_end=[]; service_dur=[]; relay_busy=[]
+    # Time-wave relay missions: each certified hover position may be reused in
+    # multiple relay sorties. This matches the benchmark's geographic-cluster
+    # + time-wave architecture and avoids forcing one very long mission per
+    # hover point.
+    MAX_WAVES=3
+    mission_use={}
+    mission_start={}
+    mission_end={}
+    mission_dur={}
+    mission_busy=[]
+    mission_meta=[]
     hover_power=float(rdata["hover_power_kw"])+float(rdata["comm_power_kw"])
     usable=(1-float(rdata["reserve"]))*float(rdata["energy_kwh"])
-    for pidx,p in enumerate(pos_rows):
-        starts_aux=[]; ends_aux=[]; assigned=[]
-        for bi,b in blocks.reset_index(drop=True).iterrows():
-            if (bi,pidx) not in y: continue
-            z=y[bi,pidx]; assigned.append(z)
-            aa=m.NewIntVar(0,H*2,f"p{pidx}_b{bi}_minaux")
-            ee=m.NewIntVar(0,H*2,f"p{pidx}_b{bi}_maxaux")
-            m.Add(aa==block_abs_start[bi]).OnlyEnforceIf(z)
-            m.Add(aa==H*2).OnlyEnforceIf(z.Not())
-            m.Add(ee==block_abs_end[bi]).OnlyEnforceIf(z)
-            m.Add(ee==0).OnlyEnforceIf(z.Not())
-            starts_aux.append(aa); ends_aux.append(ee)
-        # all four positions belong to the proven minimum cover, require use
-        m.Add(sum(assigned)>=1)
-        ss=m.NewIntVar(0,H*2,f"relay_service_start_{pidx}")
-        se=m.NewIntVar(0,H*2,f"relay_service_end_{pidx}")
-        m.AddMinEquality(ss,starts_aux); m.AddMaxEquality(se,ends_aux)
-        sd=m.NewIntVar(0,H*2,f"relay_service_dur_{pidx}"); m.Add(sd==se-ss)
-        service_start.append(ss); service_end.append(se); service_dur.append(sd)
 
-        lead=I(float(rdata["prep_s"])+float(p["outbound_s"])+float(rdata.get("link_s",0.0)))
-        tail=I(float(p["return_s"])+float(rdata["turn_s"]))
-        rs=m.NewIntVar(0,H*2,f"relay_busy_start_{pidx}")
-        re=m.NewIntVar(0,H*2,f"relay_busy_end_{pidx}")
-        m.Add(rs==ss-lead); m.Add(re==se+tail)
-        rd=m.NewIntVar(0,H*2,f"relay_busy_dur_{pidx}"); m.Add(rd==re-rs)
-        relay_busy.append(m.NewIntervalVar(rs,rd,re,f"relay_mission_{pidx}"))
-        p["lead_s"]=F(lead); p["tail_s"]=F(tail)
-        # reserve bound converted to a maximum hover/service duration
-        if hover_power>0:
-            max_service=max(0.0,(usable-float(p["base_energy_kwh"]))*3600.0/hover_power)
-            m.Add(sd<=int(math.floor(max_service*SCALE+1e-9)))
-            p["max_service_s"]=max_service
-        else: p["max_service_s"]=1e9
-    m.AddCumulative(relay_busy,[1]*len(relay_busy),2)
+    # assignment variable block -> (position,wave)
+    yw={}
+    for bi,b in blocks.reset_index(drop=True).iterrows():
+        opts=[]
+        for pidx in elig[str(b.block_id)]:
+            for w in range(MAX_WAVES):
+                z=m.NewBoolVar(f"assign_b{bi}_p{pidx}_w{w}")
+                yw[bi,pidx,w]=z
+                opts.append(z)
+        m.Add(sum(opts)==1)
+
+    for pidx,p in enumerate(pos_rows):
+        for w in range(MAX_WAVES):
+            use=m.NewBoolVar(f"mission_use_p{pidx}_w{w}")
+            ms=m.NewIntVar(0,H*2,f"mission_start_p{pidx}_w{w}")
+            me=m.NewIntVar(0,H*2,f"mission_end_p{pidx}_w{w}")
+            md=m.NewIntVar(0,H*2,f"mission_dur_p{pidx}_w{w}")
+            m.Add(md==me-ms)
+            mission_use[pidx,w]=use
+            mission_start[pidx,w]=ms
+            mission_end[pidx,w]=me
+            mission_dur[pidx,w]=md
+            assigned=[]
+            for bi,b in blocks.reset_index(drop=True).iterrows():
+                z=yw.get((bi,pidx,w))
+                if z is None: continue
+                assigned.append(z)
+                # A used mission must span every assigned communication block.
+                m.Add(ms<=block_abs_start[bi]).OnlyEnforceIf(z)
+                m.Add(me>=block_abs_end[bi]).OnlyEnforceIf(z)
+                m.AddImplication(z,use)
+            if assigned:
+                m.Add(sum(assigned)>=1).OnlyEnforceIf(use)
+                m.Add(sum(assigned)==0).OnlyEnforceIf(use.Not())
+            else:
+                m.Add(use==0)
+            # compact unused mission values to zero
+            m.Add(ms==0).OnlyEnforceIf(use.Not())
+            m.Add(me==0).OnlyEnforceIf(use.Not())
+
+            lead=I(float(rdata["prep_s"])+float(p["outbound_s"])+float(rdata.get("link_s",0.0)))
+            tail=I(float(p["return_s"])+float(rdata["turn_s"]))
+            bs=m.NewIntVar(0,H*2,f"busy_start_p{pidx}_w{w}")
+            be=m.NewIntVar(0,H*2,f"busy_end_p{pidx}_w{w}")
+            bd=m.NewIntVar(0,H*2,f"busy_dur_p{pidx}_w{w}")
+            m.Add(bs==ms-lead).OnlyEnforceIf(use)
+            m.Add(be==me+tail).OnlyEnforceIf(use)
+            m.Add(bd==be-bs).OnlyEnforceIf(use)
+            m.Add(bs==0).OnlyEnforceIf(use.Not())
+            m.Add(be==0).OnlyEnforceIf(use.Not())
+            m.Add(bd==0).OnlyEnforceIf(use.Not())
+            mission_busy.append(m.NewOptionalIntervalVar(bs,bd,be,use,f"relay_mission_p{pidx}_w{w}"))
+
+            if hover_power>0:
+                max_service=max(0.0,(usable-float(p["base_energy_kwh"]))*3600.0/hover_power)
+                m.Add(md<=int(math.floor(max_service*SCALE+1e-9))).OnlyEnforceIf(use)
+            else:
+                max_service=1e9
+            mission_meta.append({"pidx":pidx,"wave":w,"use":use,"lead_s":F(lead),"tail_s":F(tail),
+                                 "max_service_s":max_service})
+
+    m.AddCumulative(mission_busy,[1]*len(mission_busy),2)
+    mission_count=m.NewIntVar(0,len(mission_meta),"mission_count")
+    m.Add(mission_count==sum(x["use"] for x in mission_meta))
 
     tr_cmax=m.NewIntVar(0,H*2,"transport_cmax"); m.AddMaxEquality(tr_cmax,returns)
-    relay_ends=[]
-    # recover interval end vars via relation service_end + tail
-    for pidx,p in enumerate(pos_rows):
-        z=m.NewIntVar(0,H*2,f"relay_end_obj_{pidx}")
-        m.Add(z==service_end[pidx]+I(p["tail_s"])); relay_ends.append(z)
+    relay_end_terms=[]
+    for q in mission_meta:
+        e=m.NewIntVar(0,H*2,f"relay_end_obj_p{q['pidx']}_w{q['wave']}")
+        m.Add(e==mission_end[q["pidx"],q["wave"]]+I(q["tail_s"])).OnlyEnforceIf(q["use"])
+        m.Add(e==0).OnlyEnforceIf(q["use"].Not())
+        relay_end_terms.append(e)
     joint_cmax=m.NewIntVar(0,H*2,"joint_cmax")
-    m.AddMaxEquality(joint_cmax,returns+relay_ends)
-    total_service=m.NewIntVar(0,H*8,"total_relay_service"); m.Add(total_service==sum(service_dur))
+    m.AddMaxEquality(joint_cmax,returns+relay_end_terms)
+    total_service=m.NewIntVar(0,H*len(mission_meta)*2,"total_relay_service")
+    m.Add(total_service==sum(mission_dur.values()))
 
-    # phase 1: minimize soft lateness
-    sol,st=solve_phase(m,total_late,150)
+    # First test whether the benchmark-like four-sortie relay structure is
+    # feasible. If not, the solver may use more time waves, and the exact
+    # minimum relay-sortie count is optimized after timeliness.
+    # phase 1: minimize ordinary-box lateness under all hard/resource constraints
+    sol,st=solve_phase(m,total_late,120)
     if st not in (cp_model.OPTIMAL,cp_model.FEASIBLE): raise RuntimeError("phase1 infeasible")
     best_late=sol.Value(total_late); m.Add(total_late==best_late)
-    # phase 2: joint completion time
-    sol,st=solve_phase(m,joint_cmax,150)
+    # phase 2: minimum number of relay sorties/time waves
+    sol,st=solve_phase(m,mission_count,120)
     if st not in (cp_model.OPTIMAL,cp_model.FEASIBLE): raise RuntimeError("phase2 infeasible")
-    best_joint=sol.Value(joint_cmax); m.Add(joint_cmax==best_joint)
-    # phase 3: relay service span / energy
-    sol,st=solve_phase(m,total_service,150)
+    best_missions=sol.Value(mission_count); m.Add(mission_count==best_missions)
+    # phase 3: joint completion time
+    sol,st=solve_phase(m,joint_cmax,120)
     if st not in (cp_model.OPTIMAL,cp_model.FEASIBLE): raise RuntimeError("phase3 infeasible")
+    best_joint=sol.Value(joint_cmax); m.Add(joint_cmax==best_joint)
+    # phase 4: compact relay service spans / energy
+    sol,st=solve_phase(m,total_service,120)
+    if st not in (cp_model.OPTIMAL,cp_model.FEASIBLE): raise RuntimeError("phase4 infeasible")
 
     # reconstruct transport
     sr=[]
@@ -239,31 +288,40 @@ def main():
     # block assignments
     br=[]
     for bi,b in blocks.reset_index(drop=True).iterrows():
-        pidx=next(p for p in elig[str(b.block_id)] if sol.Value(y[bi,p])==1)
+        chosen=None
+        for pidx in elig[str(b.block_id)]:
+            for w in range(MAX_WAVES):
+                if sol.Value(yw[bi,pidx,w])==1:
+                    chosen=(pidx,w); break
+            if chosen is not None: break
+        if chosen is None: raise RuntimeError(f"unassigned block {b.block_id}")
+        pidx,w=chosen
         br.append({**b.to_dict(),"assigned_position_id":pos_rows[pidx]["position_id"],
+                   "assigned_wave":int(w+1),
                    "absolute_start_s":F(sol.Value(block_abs_start[bi])),
                    "absolute_end_s":F(sol.Value(block_abs_end[bi]))})
     bdf=pd.DataFrame(br); bdf.to_csv(out/"communication_block_assignments.csv",index=False,encoding="utf-8-sig")
 
-    # relay missions, greedy color 2
+    # relay missions, then greedy color onto the two physical R aircraft
     missions=[]
-    for pidx,p in enumerate(pos_rows):
-        ss=F(sol.Value(service_start[pidx])); se=F(sol.Value(service_end[pidx]))
-        busy_start=ss-p["lead_s"]; busy_end=se+p["tail_s"]
+    for q in mission_meta:
+        pidx,w=q["pidx"],q["wave"]
+        if sol.Value(q["use"])!=1: continue
+        p=pos_rows[pidx]
+        ss=F(sol.Value(mission_start[pidx,w])); se=F(sol.Value(mission_end[pidx,w]))
+        busy_start=ss-q["lead_s"]; busy_end=se+q["tail_s"]
         dur=se-ss
         energy=float(p["base_energy_kwh"])+hover_power*dur/3600.0
-        missions.append({**p,"service_start_s":ss,"service_end_s":se,"service_duration_s":dur,
-                         "busy_start_s":busy_start,"busy_end_s":busy_end,
+        missions.append({**p,"wave":int(w+1),"service_start_s":ss,"service_end_s":se,
+                         "service_duration_s":dur,"busy_start_s":busy_start,"busy_end_s":busy_end,
                          "relay_energy_kwh":energy,"usable_energy_kwh":usable,
                          "reserve_ok":energy<=usable+TOL})
     missions.sort(key=lambda z:z["busy_start_s"])
     avail={"R01":0.0,"R02":0.0}
     for z in missions:
-        rid=min(avail,key=lambda k:avail[k])
-        if z["busy_start_s"] < avail[rid]-TOL:
-            # try other relay
-            other="R02" if rid=="R01" else "R01"
-            if z["busy_start_s"] >= avail[other]-TOL: rid=other
+        fits=[rid for rid,t in avail.items() if z["busy_start_s"]>=t-TOL]
+        if not fits: raise RuntimeError("post-solve relay coloring exceeded two physical R aircraft")
+        rid=min(fits,key=lambda k:avail[k])
         z["relay_id"]=rid; avail[rid]=z["busy_end_s"]
     mdf=pd.DataFrame(missions); mdf.to_csv(out/"relay_missions.csv",index=False,encoding="utf-8-sig")
 
@@ -285,14 +343,14 @@ def main():
 
     relay_peak=peak([(x["busy_start_s"],x["busy_end_s"]) for x in missions])
     summary={
-      "status":"GLOBAL_BLOCK_LEVEL_CERTIFIED_NEEDS_FINAL_CONTINUOUS_REPLAY",
+      "status":"GLOBAL_TIME_WAVE_BLOCK_LEVEL_CERTIFIED_NEEDS_FINAL_CONTINUOUS_REPLAY",
       "q3_global_certified":False,
       "transport_routes":22,"boxes":len(ddf),"unique_boxes":int(ddf.box_id.nunique()),
       "hard_violation_boxes":int(ddf.hard_violation.sum()),
       "soft_late_boxes":int((ddf.soft_lateness_s>TOL).sum()),
       "soft_total_lateness_s":float(ddf.soft_lateness_s.sum()),
       "transport_makespan_s":float(sdf.return_s.max()),
-      "relay_missions":4,"relay_peak":int(relay_peak),
+      "relay_missions":int(len(missions)),"relay_peak":int(relay_peak),
       "relay_energy_all_reserve_ok":bool(mdf.reserve_ok.all()),
       "communication_blocks":int(len(bdf)),
       "communication_blocks_assigned":int(len(bdf)),
@@ -301,8 +359,10 @@ def main():
       "battery_no_overlap":bool(no_overlap(sdf,"battery","start_s","battery_end_s")) if False else True,
       "joint_completion_s":F(sol.Value(joint_cmax)),
       "phase1_total_lateness_ds":int(best_late),
-      "phase2_joint_cmax_ds":int(best_joint),
-      "phase3_total_relay_service_ds":int(sol.Value(total_service)),
+      "minimum_relay_sorties":int(best_missions),
+      "four_relay_sorties_feasible":bool(best_missions<=4),
+      "phase3_joint_cmax_ds":int(best_joint),
+      "phase4_total_relay_service_ds":int(sol.Value(total_service)),
       "final_continuous_interval_replay_pass":False,
       "scope_note":"All route blocks are assigned to strict hypergraph cover positions and resources are globally scheduled. Final recursive continuous-interval communication replay is the remaining Q3 gate."
     }
