@@ -1,0 +1,97 @@
+name: q3-k23-25-under7000-search
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - .github/workflows/q3-k23-25-under7000-search.yml
+      - src/q3_target_relay_search.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        k: [23,24,25]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Build exact-K transport candidate
+        run: |
+          python src/q3_k18_23_pareto.py \
+            --exact-routes ${{ matrix.k }} \
+            --time-limit 360 \
+            --out results/search_k${{ matrix.k }}/master
+      - name: Build strict 1596-point hypergraph
+        run: |
+          python src/q3_hover_hypergraph.py \
+            --schedule results/search_k${{ matrix.k }}/master/selected_schedule.csv \
+            --label K${{ matrix.k }} \
+            --out results/search_k${{ matrix.k }}/hg
+      - name: Search M=3 and M=4 under 7000 seconds
+        shell: bash
+        run: |
+          set -u
+          for M in 3 4; do
+            BASE="results/search_k${{ matrix.k }}/m${M}"
+            mkdir -p "$BASE"
+            echo "=== K=${{ matrix.k }} M=$M ==="
+            set +e
+            python src/q3_target_relay_search.py \
+              --schedule results/search_k${{ matrix.k }}/master/selected_schedule.csv \
+              --hypergraph results/search_k${{ matrix.k }}/hg/K${{ matrix.k }} \
+              --relay-sorties "$M" \
+              --target-s 7000 \
+              --time-limit 360 \
+              --out "$BASE/materialized"
+            RC=$?
+            set -e
+            if [ "$RC" -ne 0 ]; then
+              echo "K=${{ matrix.k }} M=$M target search infeasible or not found"
+              continue
+            fi
+
+            python src/q3_fine_time_repair.py \
+              --base "$BASE/materialized" \
+              --out "$BASE/repaired" \
+              --joint-cap-s 7000 \
+              --prioritize-soft
+
+            mkdir -p "$BASE/repaired/hypergraph"
+            cp results/search_k${{ matrix.k }}/hg/K${{ matrix.k }}/block_diagnostics.csv "$BASE/repaired/hypergraph/"
+
+            python src/q3_final_continuous_cert.py \
+              --base "$BASE/repaired" \
+              --out "$BASE/final"
+
+            python - "$BASE/final/q3_global_summary.json" ${{ matrix.k }} "$M" <<'PY'
+          import json,sys
+          p,k,m=sys.argv[1],int(sys.argv[2]),int(sys.argv[3])
+          s=json.load(open(p,encoding="utf-8"))
+          out={
+            "K":k,"M":m,
+            "certified":s.get("q3_global_certified"),
+            "joint_completion_s":s.get("joint_completion_s"),
+            "under_7000":bool(s.get("q3_global_certified") and s.get("joint_completion_s",1e99)<7000),
+            "soft_violation_boxes":s.get("soft_violation_boxes"),
+            "total_soft_lateness_s":s.get("total_soft_lateness_s"),
+            "transport_energy_kwh":s.get("transport_energy_kwh"),
+            "relay_energy_kwh":s.get("relay_energy_kwh"),
+            "joint_energy_kwh":s.get("joint_energy_kwh"),
+            "continuous_communication_pass":s.get("continuous_communication_pass")
+          }
+          print("TARGET_FINAL_SUMMARY="+json.dumps(out,ensure_ascii=False))
+          PY
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-k${{ matrix.k }}-under7000-search
+          path: results/search_k${{ matrix.k }}/
