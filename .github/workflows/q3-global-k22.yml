@@ -1,4 +1,4 @@
-name: q3-global-k22
+name: q3-global-candidates
 
 on:
   push:
@@ -14,27 +14,39 @@ permissions:
 
 jobs:
   schedule:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: K22
+            q2_run: 36203061746
+            q2_artifact: q2-k22-refine-seed-43
+            hg_artifact: q3-hover-hypergraph-K22
+          - label: K23
+            q2_run: 36206159819
+            q2_artifact: q2-gap-r2-K23-seed-29
+            hg_artifact: q3-hover-hypergraph-K23
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - run: pip install numpy pandas scipy openpyxl ortools h5py
-      - name: Download K22 Q2 schedule
+      - name: Download transport schedule and hover hypergraph
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p /tmp/q2 /tmp/hg
-          gh run download 36203061746 -n q2-k22-refine-seed-43 -D /tmp/q2
-          gh run download 36228095518 -n q3-hover-hypergraph-K22 -D /tmp/hg
+          gh run download ${{ matrix.q2_run }} -n ${{ matrix.q2_artifact }} -D /tmp/q2
+          gh run download 36228095518 -n ${{ matrix.hg_artifact }} -D /tmp/hg
           test -f /tmp/q2/schedule.csv
           test -f /tmp/hg/minimum_cover_positions.csv
       - name: Joint transport-relay scheduling
-        run: python src/q3_global_k22_schedule.py --schedule /tmp/q2/schedule.csv --hypergraph /tmp/hg
+        run: python src/q3_global_k22_schedule.py --schedule /tmp/q2/schedule.csv --hypergraph /tmp/hg --label ${{ matrix.label }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: q3-global-k22
-          path: results/q3_global/
+          name: q3-global-${{ matrix.label }}
+          path: results/q3_global/${{ matrix.label }}/

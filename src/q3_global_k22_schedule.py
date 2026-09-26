@@ -1,4 +1,4 @@
-"""Q3 global K22 schedule: fixed transport routes, 4 certified hover positions.
+"""Q3 global schedule: fixed transport route set, certified hover positions.
 
 This stage keeps the frozen Q2 K=22 route/box/type/aircraft/battery structure,
 but re-optimizes route start times jointly with the four minimum-cover relay
@@ -73,16 +73,18 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--schedule",required=True)
     ap.add_argument("--hypergraph",required=True)
+    ap.add_argument("--label",required=True)
     ap.add_argument("--out",default="results/q3_global")
     args=ap.parse_args()
-    out=Path(args.out); out.mkdir(parents=True,exist_ok=True)
+    out=Path(args.out)/args.label; out.mkdir(parents=True,exist_ok=True)
     data=load_inputs()
     sch=pd.read_csv(args.schedule).reset_index(drop=True)
     hg=Path(args.hypergraph)
     blocks=pd.read_csv(hg/"block_diagnostics.csv")
     cover=pd.read_csv(hg/"minimum_cover_positions.csv")
-    if len(sch)!=22 or len(cover)!=4:
-        raise RuntimeError(f"expected K22 and 4 hover positions, got routes={len(sch)}, hover={len(cover)}")
+    K=len(sch)
+    if len(cover)!=4:
+        raise RuntimeError(f"expected 4 hover positions from minimum cover, got routes={K}, hover={len(cover)}")
 
     # authoritative 80-box check
     allids=[b for z in sch.box_ids for b in parse_ids(z)]
@@ -126,13 +128,18 @@ def main():
         starts.append(sv); returns.append(ev)
         if pd.notna(row.latest_start_s):
             m.Add(sv<=int(math.floor(float(row.latest_start_s)*SCALE+1e-9)))
-        air_int[str(row.aircraft)].append(m.NewIntervalVar(sv,dur,ev,f"air_{i}"))
-        bdur=I(float(row.battery_end_s)-float(row.start_s))
+        typ=str(row.drone_type)
+        air_int[typ].append(m.NewIntervalVar(sv,dur,ev,f"air_{i}"))
+        bdur=I(float(row.charge_s)+float(row.duration_s))
         bev=m.NewIntVar(0,H+bdur,f"bat_end_{i}")
         m.Add(bev==sv+bdur)
-        bat_int[str(row.battery)].append(m.NewIntervalVar(sv,bdur,bev,f"bat_{i}"))
-    for ints in air_int.values(): m.AddNoOverlap(ints)
-    for ints in bat_int.values(): m.AddNoOverlap(ints)
+        bat_int[typ].append(m.NewIntervalVar(sv,bdur,bev,f"bat_{i}"))
+    # Q3 is allowed to reassign concrete aircraft and batteries. Preserve the
+    # route/drone-type structure but enforce the official pooled capacities.
+    for typ,ints in air_int.items():
+        m.AddCumulative(ints,[1]*len(ints),len(data["aircraft"][typ]))
+    for typ,ints in bat_int.items():
+        m.AddCumulative(ints,[1]*len(ints),int(data["batteries"][typ]))
 
     # ordinary soft lateness objective; hard boxes are already represented by latest_start.
     bm={str(x["货箱编号"]):x for x in data["boxes"]}
@@ -169,7 +176,7 @@ def main():
     # multiple relay sorties. This matches the benchmark's geographic-cluster
     # + time-wave architecture and avoids forcing one very long mission per
     # hover point.
-    MAX_WAVES=3
+    MAX_WAVES=4
     mission_use={}
     mission_start={}
     mission_end={}
@@ -345,7 +352,7 @@ def main():
     summary={
       "status":"GLOBAL_TIME_WAVE_BLOCK_LEVEL_CERTIFIED_NEEDS_FINAL_CONTINUOUS_REPLAY",
       "q3_global_certified":False,
-      "transport_routes":22,"boxes":len(ddf),"unique_boxes":int(ddf.box_id.nunique()),
+      "label":args.label,"transport_routes":int(K),"boxes":len(ddf),"unique_boxes":int(ddf.box_id.nunique()),
       "hard_violation_boxes":int(ddf.hard_violation.sum()),
       "soft_late_boxes":int((ddf.soft_lateness_s>TOL).sum()),
       "soft_total_lateness_s":float(ddf.soft_lateness_s.sum()),
@@ -355,8 +362,8 @@ def main():
       "communication_blocks":int(len(bdf)),
       "communication_blocks_assigned":int(len(bdf)),
       "all_assignments_from_certified_cover":True,
-      "aircraft_no_overlap":bool(no_overlap(sdf,"aircraft","start_s","return_s")),
-      "battery_no_overlap":bool(no_overlap(sdf,"battery","start_s","battery_end_s")) if False else True,
+      "aircraft_capacity_model":"pooled_by_drone_type",
+      "battery_capacity_model":"pooled_by_drone_type",
       "joint_completion_s":F(sol.Value(joint_cmax)),
       "phase1_total_lateness_ds":int(best_late),
       "minimum_relay_sorties":int(best_missions),
@@ -366,14 +373,25 @@ def main():
       "final_continuous_interval_replay_pass":False,
       "scope_note":"All route blocks are assigned to strict hypergraph cover positions and resources are globally scheduled. Final recursive continuous-interval communication replay is the remaining Q3 gate."
     }
-    # Battery end after shifted starts is recomputed from the fixed relative occupancy.
-    sdf2=pd.read_csv(out/"transport_schedule.csv")
-    sdf2["battery_busy_end_s"]=[float(r.start_s)+(float(orig.battery_end_s)-float(orig.start_s)) for (_,r),(_,orig) in zip(sdf2.iterrows(),sch.iterrows())]
-    summary["battery_no_overlap"]=bool(no_overlap(sdf2,"battery","start_s","battery_busy_end_s"))
+    # Independent pooled-capacity replay on reconstructed starts.
+    air_ok=True; bat_ok=True; air_peaks={}; bat_peaks={}
+    for typ in sorted(data["aircraft"]):
+        ints=[]; bints=[]
+        for i,row in sdf.iterrows():
+            if str(row.drone_type)!=typ: continue
+            ints.append((float(row.start_s),float(row.return_s)))
+            orig=sch.iloc[i]
+            bints.append((float(row.start_s),float(row.start_s)+float(orig.duration_s)+float(orig.charge_s)))
+        air_peaks[typ]=peak(ints); bat_peaks[typ]=peak(bints)
+        air_ok &= air_peaks[typ] <= len(data["aircraft"][typ])
+        bat_ok &= bat_peaks[typ] <= int(data["batteries"][typ])
+    summary["aircraft_peak_by_type"]=air_peaks
+    summary["battery_peak_by_type"]=bat_peaks
+    summary["aircraft_capacity_pass"]=bool(air_ok)
+    summary["battery_capacity_pass"]=bool(bat_ok)
     summary["block_level_global_pass"]=bool(
         summary["boxes"]==80 and summary["unique_boxes"]==80 and summary["hard_violation_boxes"]==0 and
-        summary["relay_peak"]<=2 and summary["relay_energy_all_reserve_ok"] and
-        summary["aircraft_no_overlap"] and summary["battery_no_overlap"]
+        summary["relay_peak"]<=2 and summary["relay_energy_all_reserve_ok"] and air_ok and bat_ok
     )
     (out/"q3_global_summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps(summary,ensure_ascii=False,indent=2))
