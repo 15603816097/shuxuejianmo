@@ -111,7 +111,21 @@ def main(base,outdir):
     # materialize exact mission timing/energy and exact component assignment
     cav={f"RE-{i+1:02d}":0.0 for i in range(int(rdat["component_inventory"]))}
     rav={"R01":0.0,"R02":0.0}
-    for idx in missions.sort_values("busy_start_s").index:
+    def exact_busy_start(idx):
+        mid=str(missions.at[idx,"mission_id"])
+        ass=ba[ba.mission_id.astype(str)==mid]
+        xs=[]
+        for _,a in ass.iterrows():
+            ri,off0,_=block_offsets[str(a.block_id)]
+            xs.append(solver.Value(starts[ri])/S + off0)
+        ss=min(xs)
+        q={"经度（°）":float(missions.at[idx,"lon"]),"纬度（°）":float(missions.at[idx,"lat"])}
+        dist,terrain,*_=line_geometry(data["center"],q,data["dem"])
+        tout,_=relay_leg_time_energy(data,dist,terrain,float(data["center"]["海拔（m）"]),float(missions.at[idx,"altitude_m"]))
+        return ss-float(rdat["prep_s"])-tout-float(rdat["link_s"])
+
+    # Recolor by the NEW exact busy-start order, not the stale input order.
+    for idx in sorted(missions.index,key=exact_busy_start):
         mid=str(missions.at[idx,"mission_id"])
         ass=ba[ba.mission_id.astype(str)==mid]
         exact_starts=[]; exact_ends=[]
