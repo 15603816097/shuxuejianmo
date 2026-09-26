@@ -1,0 +1,49 @@
+name: q3-final-failure-diagnostic
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - .github/workflows/q3-final-failure-diagnostic.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas
+      - name: Download final certification artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/cert
+          gh run download 36244393737 -n q3-final-continuous-cert -D /tmp/cert
+          find /tmp/cert -maxdepth 2 -type f -print
+      - name: Summarize continuous communication failures
+        run: |
+          python - <<'PY'
+          import json, pandas as pd
+          from pathlib import Path
+          p=Path('/tmp/cert')
+          c=pd.read_csv(p/'continuous_communication_certificate.csv')
+          f=c[c['pass']==False].copy()
+          print(json.dumps({
+            'rows_total': int(len(c)),
+            'rows_failed': int(len(f)),
+            'failed_routes': sorted(set(int(x) for x in f['route_index'].tolist())),
+            'failed_phases': f['phase'].value_counts().to_dict(),
+            'failed_modes': f['modes'].value_counts().to_dict(),
+            'failed_with_block': int((f['block_id'].fillna('').astype(str)!='').sum()),
+            'failed_without_block': int((f['block_id'].fillna('').astype(str)=='').sum()),
+          },ensure_ascii=False,indent=2))
+          cols=['route_index','block_id','phase','start_s','end_s','mission_id','relay_id',
+                'min_direct_margin_db','min_access_margin_db','min_backhaul_margin_db','modes','leaf_intervals']
+          print(f[cols].sort_values(['route_index','start_s']).to_string(index=False))
+          PY
