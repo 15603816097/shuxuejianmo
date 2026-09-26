@@ -4,7 +4,8 @@ on:
   push:
     branches: [chatgpt-architecture]
     paths:
-      - 'src/q3_strict_edge_graph_all_types.py'
+      - 'src/q3_strict_edge_graph_shard.py'
+      - 'src/q3_merge_strict_edge_shards.py'
       - 'src/q3_strict_route_set_master.py'
       - '.github/workflows/q3-official-joint.yml'
   workflow_dispatch:
@@ -14,18 +15,16 @@ permissions:
   actions: read
 
 jobs:
-  stage1:
+  q2-baseline-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 70
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: python -m pip install --upgrade pip
       - run: pip install numpy pandas scipy openpyxl ortools h5py
-      - name: Frozen Q3 regression
-        run: python src/test_q3_obstacle_loss_regression.py
+      - run: python src/test_q3_obstacle_loss_regression.py
       - name: Download frozen Q2 K22 optimum
         env:
           GH_TOKEN: ${{ github.token }}
@@ -33,16 +32,54 @@ jobs:
           mkdir -p /tmp/q2k22
           gh run download 36203061746 -n q2-k22-refine-seed-43 -D /tmp/q2k22
           test -f /tmp/q2k22/schedule.csv
-      - name: Strict K22 route audit
-        run: python src/q3_strict_audit_q2_final.py --schedule /tmp/q2k22/schedule.csv
-      - name: Strict all-type communication graph
-        run: python src/q3_strict_edge_graph_all_types.py
-      - name: Exact 80-box strict route-set seed search
-        run: python src/q3_strict_route_set_master.py
-      - name: Copy baseline audit into official result bundle
-        run: |
-          mkdir -p results/q3_official/q2_k22_baseline
-          cp -r results/q3_strict/* results/q3_official/q2_k22_baseline/
+      - run: python src/q3_strict_audit_q2_final.py --schedule /tmp/q2k22/schedule.csv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: q3-k22-baseline-audit
+          path: results/q3_strict/
+
+  graph:
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        type: [A, B, C]
+        shard: [0, 1, 2, 3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl h5py
+      - run: python src/q3_strict_edge_graph_shard.py --type ${{ matrix.type }} --shard ${{ matrix.shard }} --shards 4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: q3-edge-${{ matrix.type }}-${{ matrix.shard }}
+          path: results/q3_official_shards/*.csv
+
+  master:
+    needs: [graph, q2-baseline-audit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: q3-edge-*
+          path: results/q3_official_shards
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: q3-k22-baseline-audit
+          path: results/q3_official/q2_k22_baseline
+      - run: python src/q3_merge_strict_edge_shards.py
+      - run: python src/q3_strict_route_set_master.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
