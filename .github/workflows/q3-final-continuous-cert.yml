@@ -26,17 +26,19 @@ jobs:
         run: |
           mkdir -p /tmp/final
           gh run download 36243861245 -n q3-joint18x5-materialized -D /tmp/final
+          echo "Downloaded materialized files:"
+          find /tmp/final -maxdepth 2 -type f -print
       - name: Download joint hypergraph
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p /tmp/joint
           gh run download 36241328424 -n q3-joint-grouping-search -D /tmp/joint
-          mkdir -p /tmp/final/q3_joint18x5_materialized/hypergraph
-          cp /tmp/joint/q3_joint_grouping_hg/JOINT/block_diagnostics.csv /tmp/final/q3_joint18x5_materialized/hypergraph/
+          mkdir -p /tmp/final/hypergraph
+          cp /tmp/joint/q3_joint_grouping_hg/JOINT/block_diagnostics.csv /tmp/final/hypergraph/
       - name: Recursive continuous certification to 0.1 s
         run: |
-          python src/q3_final_continuous_cert.py             --base /tmp/final/q3_joint18x5_materialized             --out results/q3_official
+          python src/q3_final_continuous_cert.py             --base /tmp/final             --out results/q3_official
       - uses: actions/upload-artifact@v4
         if: always()
         with:
