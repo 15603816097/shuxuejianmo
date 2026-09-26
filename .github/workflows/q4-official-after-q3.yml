@@ -1,0 +1,34 @@
+name: q4-official-after-q3
+
+on:
+  workflow_run:
+    workflows: ["q3-official-joint"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download Q3 stage artifact when available
+        if: ${{ github.event_name == 'workflow_run' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p results/q3_official
+          gh run download "${{ github.event.workflow_run.id }}" -n q3-official-stage1 -D /tmp/q3 || true
+          if [ -d /tmp/q3 ]; then cp -r /tmp/q3/* results/q3_official/ || true; fi
+      - name: Q4 prerequisite gate
+        run: python src/q4_official_gate.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: q4-official-gate
+          path: results/q4_official/
