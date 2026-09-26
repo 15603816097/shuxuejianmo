@@ -1,0 +1,64 @@
+name: q2-all-k-gap-round2
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - '.github/workflows/q2-all-k-gap-round2.yml'
+  workflow_dispatch:
+
+jobs:
+  refine:
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        k: [18, 19, 20, 21, 23, 24, 25, 26]
+        seed: [29, 71]
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --upgrade pip
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Resolve best round-1 incumbent
+        id: src
+        shell: bash
+        run: |
+          K=${{ matrix.k }}
+          case "$K" in
+            18) echo "hintseed=11" >> "$GITHUB_OUTPUT"; echo "ub=8855.3" >> "$GITHUB_OUTPUT" ;;
+            19) echo "hintseed=11" >> "$GITHUB_OUTPUT"; echo "ub=8423.3" >> "$GITHUB_OUTPUT" ;;
+            20) echo "hintseed=3"  >> "$GITHUB_OUTPUT"; echo "ub=7374.3" >> "$GITHUB_OUTPUT" ;;
+            21) echo "hintseed=11" >> "$GITHUB_OUTPUT"; echo "ub=7176.3" >> "$GITHUB_OUTPUT" ;;
+            23) echo "hintseed=3"  >> "$GITHUB_OUTPUT"; echo "ub=6239.9" >> "$GITHUB_OUTPUT" ;;
+            24) echo "hintseed=3"  >> "$GITHUB_OUTPUT"; echo "ub=6369.0" >> "$GITHUB_OUTPUT" ;;
+            25) echo "hintseed=3"  >> "$GITHUB_OUTPUT"; echo "ub=6009.5" >> "$GITHUB_OUTPUT" ;;
+            26) echo "hintseed=3"  >> "$GITHUB_OUTPUT"; echo "ub=6076.6" >> "$GITHUB_OUTPUT" ;;
+          esac
+      - name: Download best round-1 schedule
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          mkdir -p /tmp/hint
+          gh run download 36203319826             -n "q2-gap-K${{ matrix.k }}-seed-${{ steps.src.outputs.hintseed }}"             -D /tmp/hint
+          HINT="$(find /tmp/hint -name schedule.csv | head -1)"
+          test -n "$HINT"
+          echo "HINT=$HINT" >> "$GITHUB_ENV"
+      - name: Refine/prove fixed K round 2
+        run: >
+          python src/q2_fixed_k_gap_refine.py
+          --k ${{ matrix.k }}
+          --seed ${{ matrix.seed }}
+          --time-limit 2400
+          --upper-bound ${{ steps.src.outputs.ub }}
+          --hint-csv "$HINT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q2-gap-r2-K${{ matrix.k }}-seed-${{ matrix.seed }}
+          path: results/q2_v2/gap_refine/K${{ matrix.k }}/seed_${{ matrix.seed }}/
