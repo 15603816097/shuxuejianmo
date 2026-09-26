@@ -1,0 +1,39 @@
+name: q3-joint-grouping-search
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - src/q3_joint_grouping_search.py
+      - .github/workflows/q3-joint-grouping-search.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  joint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Joint grouping and timing search
+        run: python src/q3_joint_grouping_search.py --max-routes 24 --time-limit 300
+      - name: Strict 1596-point hypergraph on selected joint schedule
+        if: success()
+        run: |
+          python src/q3_hover_hypergraph.py             --schedule results/q3_joint_grouping/selected_schedule.csv             --label JOINT             --out results/q3_joint_grouping_hg
+      - name: Exact four-sortie validation with flexible certified hover positions
+        if: success()
+        run: |
+          python src/q3_flexible_four_sorties.py             --schedule results/q3_joint_grouping/selected_schedule.csv             --hypergraph results/q3_joint_grouping_hg/JOINT             --label JOINT             --out results/q3_joint_grouping_four
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-joint-grouping-search
+          path: |
+            results/q3_joint_grouping/
+            results/q3_joint_grouping_hg/
+            results/q3_joint_grouping_four/
