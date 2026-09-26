@@ -1,4 +1,5 @@
 name: q3-fine-time-repair-and-cert
+# conservative exact-boundary rerun
 on:
   push:
     branches:
