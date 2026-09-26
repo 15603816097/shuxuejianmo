@@ -90,35 +90,41 @@ def seed_candidates(data):
         if z is not None: out.append(z)
     return out
 
-def backhaul_margin(data,cand,tb):
-    c=data["center"]
-    gh=float(c["海拔（m）"])+float(data["comm"][("固定网关 G01","天线离地高度（m）")])
-    R=pipe.xyz(data,cand["p"],cand["altitude_m"])
-    G=pipe.xyz(data,c,gh)
-    dist=float(np.linalg.norm(R-G))
-    obs=float(data["comm"][("传播参数","地形遮挡附加损耗（dB)")]) if False else float(data["comm"][("传播参数","地形遮挡附加损耗（dB）")])
-    blocked=pipe.link_obstructed(data,cand["p"],c,cand["altitude_m"],gh)
-    return float(tb-fspl(float(data["comm"][("传播参数","载波频率（MHz）")]),dist)-(obs if blocked else 0.0))
-
-def block_score(data,block,cand,ta,tb,pre_back=None):
+def _margin_fast(data,a,b,ha,hb,thr):
+    """Exact pass/fail with cheap bounds; terrain is queried only in the ambiguous 0..obstacle-loss band."""
     freq=float(data["comm"][("传播参数","载波频率（MHz）")])
     obs=float(data["comm"][("传播参数","地形遮挡附加损耗（dB）")])
-    R=pipe.xyz(data,cand["p"],cand["altitude_m"])
+    A=pipe.xyz(data,a,ha); B=pipe.xyz(data,b,hb)
+    dist=float(np.linalg.norm(A-B))
+    clear=float(thr-fspl(freq,dist))
+    if clear < -TOL:
+        return clear
+    if clear-obs >= -TOL:
+        # It passes even if obstructed. Return the conservative obstructed margin
+        # so ranking never overstates the certificate.
+        return clear-obs
+    blocked=pipe.link_obstructed(data,a,b,ha,hb)
+    return float(clear-(obs if blocked else 0.0))
+
+def candidate_static(data,cand,tb):
+    """Candidate quantities independent of the served block; compute once."""
+    c=data["center"]
+    gh=float(c["海拔（m）"])+float(data["comm"][("固定网关 G01","天线离地高度（m）")])
+    bm=_margin_fast(data,cand["p"],c,cand["altitude_m"],gh,tb)
+    dist,peak,*_=line_geometry(c,cand["p"],data["dem"])
+    _,eout=relay_leg_time_energy(data,dist,peak,float(c["海拔（m）"]),cand["altitude_m"])
+    _,eback=relay_leg_time_energy(data,dist,peak,cand["altitude_m"],float(c["海拔（m）"]))
+    return {"backhaul_margin":float(bm),"base_flight_energy_kwh":float(eout+eback)}
+
+def block_score(data,block,cand,ta,static):
     margins=[]
     for q in block["items"]:
       for ep,eh in ((q["a"],q["ha"]),(q["b"],q["hb"])):
-        E=pipe.xyz(data,ep,eh)
-        dist=float(np.linalg.norm(E-R))
-        blocked=pipe.link_obstructed(data,ep,cand["p"],eh,cand["altitude_m"])
-        margins.append(float(ta-fspl(freq,dist)-(obs if blocked else 0.0)))
-    bm=backhaul_margin(data,cand,tb) if pre_back is None else float(pre_back)
+        margins.append(_margin_fast(data,ep,cand["p"],eh,cand["altitude_m"],ta))
+    bm=float(static["backhaul_margin"])
     access=min(margins) if margins else float("inf")
-    # relay energy/reserve for this block
-    dist,peak,*_=line_geometry(data["center"],cand["p"],data["dem"])
-    tout,eout=relay_leg_time_energy(data,dist,peak,float(data["center"]["海拔（m）"]),cand["altitude_m"])
-    tback,eback=relay_leg_time_energy(data,dist,peak,cand["altitude_m"],float(data["center"]["海拔（m）"]))
     dur=float(block["end_s"])-float(block["start_s"])
-    e=eout+eback+(float(data["relay"]["hover_power_kw"])+float(data["relay"]["comm_power_kw"]))*dur/3600.0
+    e=float(static["base_flight_energy_kwh"])+(float(data["relay"]["hover_power_kw"])+float(data["relay"]["comm_power_kw"]))*dur/3600.0
     emax=(1-float(data["relay"]["reserve"]))*float(data["relay"]["energy_kwh"])
     energy_ok=bool(e<=emax+TOL)
     return min(access,bm),access,bm,energy_ok,e
@@ -178,19 +184,21 @@ def main():
       if k not in seen: seen.add(k); uniq.append(c)
     cands=uniq
 
-    back=[backhaul_margin(data,c,tb) for c in cands]
+    print(f"{args.label}: relay_blocks={len(blocks)}, candidates={len(cands)}",flush=True)
+    statics=[candidate_static(data,c,tb) for c in cands]
     cover=[set() for _ in cands]
     block_rows=[]; unresolved=[]
     for bi,b in enumerate(blocks):
       ranked=[]
       for ci,c in enumerate(cands):
-        score,am,bm,eok,e=block_score(data,b,c,ta,tb,back[ci])
+        score,am,bm,eok,e=block_score(data,b,c,ta,statics[ci])
         ranked.append((score,c,ci,am,bm,eok,e))
         if score>=-TOL and eok: cover[ci].add(bi)
       ranked.sort(key=lambda x:x[0],reverse=True)
       feasible=sum(1 for z in ranked if z[0]>=-TOL and z[5])
       best=ranked[0]
       if feasible==0: unresolved.append((bi,b,[(z[0],z[1]) for z in ranked[:6]]))
+      print(f"{args.label}: block {bi+1}/{len(blocks)} feasible_candidates={feasible} best_margin={best[0]:.4f}",flush=True)
       block_rows.append({"block_id":b["block_id"],"route_index":b["route_index"],
                          "visit_order":b["visit_order"],"start_s":b["start_s"],"end_s":b["end_s"],
                          "base_feasible_candidates":feasible,"best_joint_margin_db":best[0],
@@ -198,15 +206,20 @@ def main():
                          "best_energy_ok":best[5],"best_relay_energy_kwh":best[6]})
 
     # adaptive refinement only for uncovered blocks
-    for bi,b,ranked in unresolved:
+    for ui,(bi,b,ranked) in enumerate(unresolved,1):
+      print(f"{args.label}: adaptive refine {ui}/{len(unresolved)} for {b['block_id']}",flush=True)
       new=local_refine(data,b,ranked,ta,tb)
       for c in new:
         k=(round(c["lon"],7),round(c["lat"],7),round(c["agl_m"],2))
         if k in seen: continue
-        seen.add(k); ci=len(cands); cands.append(c); bm0=backhaul_margin(data,c,tb); back.append(bm0); cv=set()
-        # evaluate new point on every block so it can create shared coverage
+        seen.add(k); ci=len(cands); cands.append(c); st=candidate_static(data,c,tb); statics.append(st); cv=set()
+        # First require the refinement to solve its target uncovered block.
+        target_score,_,_,target_eok,_=block_score(data,b,c,ta,st)
+        if target_score < -TOL or not target_eok:
+          cover.append(cv); continue
+        # Only successful refinements are tested against all blocks for sharing.
         for bj,bb in enumerate(blocks):
-          score,am,bm,eok,e=block_score(data,bb,c,ta,tb,bm0)
+          score,am,bm,eok,e=block_score(data,bb,c,ta,st)
           if score>=-TOL and eok: cv.add(bj)
         cover.append(cv)
 
