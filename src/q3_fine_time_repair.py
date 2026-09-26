@@ -45,12 +45,12 @@ def main(base,outdir):
     starts=[]; ends=[]; air=defaultdict(list); bat=defaultdict(list)
     for i,r in tr.iterrows():
         s=m.NewIntVar(0,H,f"s{i}"); e=m.NewIntVar(0,H*2,f"e{i}")
-        dur=I(r.duration_s); m.Add(e==s+dur)
+        dur=int(math.ceil(float(r.duration_s)*S-1e-12)); m.Add(e==s+dur)
         if pd.notna(r.latest_start_s): m.Add(s<=int(math.floor(float(r.latest_start_s)*S+1e-9)))
         starts.append(s); ends.append(e)
         typ=str(r.drone_type)
         air[typ].append(m.NewIntervalVar(s,dur,e,f"air{i}"))
-        bd=I(float(r.duration_s)+float(r.charge_s)); be=m.NewIntVar(0,H*2,f"be{i}"); m.Add(be==s+bd)
+        bd=int(math.ceil((float(r.duration_s)+float(r.charge_s))*S-1e-12)); be=m.NewIntVar(0,H*2,f"be{i}"); m.Add(be==s+bd)
         bat[typ].append(m.NewIntervalVar(s,bd,be,f"bat{i}"))
     for typ,ints in air.items(): m.AddCumulative(ints,[1]*len(ints),len(data["aircraft"][typ]))
     for typ,ints in bat.items(): m.AddCumulative(ints,[1]*len(ints),int(data["batteries"][typ]))
@@ -106,7 +106,7 @@ def main(base,outdir):
 
     for i in range(len(tr)):
         tr.at[i,"start_s"]=solver.Value(starts[i])/S
-        tr.at[i,"return_s"]=solver.Value(ends[i])/S
+        tr.at[i,"return_s"]=float(tr.at[i,"start_s"])+float(tr.at[i,"duration_s"])
 
     # materialize exact mission timing/energy and exact component assignment
     cav={f"RE-{i+1:02d}":0.0 for i in range(int(rdat["component_inventory"]))}
