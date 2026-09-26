@@ -20,6 +20,13 @@ from q3_five_service_hover_refinement import thresholds
 EPS=1e-9
 MAX_DT=0.1
 
+def route_order(r):
+    if "visit_order" in r.index and pd.notna(r["visit_order"]):
+        return tuple(x for x in str(r["visit_order"]).split(">") if x)
+    if "service" in r.index and pd.notna(r["service"]):
+        return (str(r["service"]),)
+    raise RuntimeError("schedule row missing visit_order/service")
+
 def parse_ids(v):
     if isinstance(v,list): return [str(x) for x in v]
     try: return [str(x) for x in json.loads(str(v))]
@@ -100,7 +107,7 @@ def main(base,outdir):
 
     for ri,r in tr.iterrows():
         ids=parse_ids(r.box_ids); all_box+=ids
-        tl=build_authoritative_timeline(data,(str(r.service),),str(r.drone_type),ids)
+        tl=build_authoritative_timeline(data,route_order(r),str(r.drone_type),ids)
         start=float(r.start_s)
         for d in deadline_ledger(data,tl):
             q=dict(d); q["delivery_time_s"]=float(q["delivery_time_s"])+start
@@ -162,12 +169,12 @@ def main(base,outdir):
     soft_violation_boxes=int((soft["lateness_s"]>1e-9).sum())
     total_soft_late=float(soft["lateness_s"].sum())
 
-    joint_energy=float(tr.transport_energy_kwh.sum()+missions.energy_kwh.sum())
+    joint_energy=float((tr.transport_energy_kwh if "transport_energy_kwh" in tr.columns else tr.energy_kwh).sum()+missions.energy_kwh.sum())
     joint_completion=float(max(tr.return_s.max(),missions.busy_end_s.max()))
     final=bool(exact80 and hard_ok and transport_resource_ok and battery_resource_ok and relay_resource_ok and comp_ok and comm_ok)
     summary={
       "q3_global_certified":final,
-      "scope":"current JOINT-18 candidate; not a proof of global route-space optimality",
+      "scope":"current certified candidate; not a proof of global route-space optimality",
       "transport_routes":int(len(tr)),"relay_sorties":int(len(missions)),"boxes":len(all_box),"unique_boxes":len(set(all_box)),
       "hard_deadline_pass":hard_ok,"soft_violation_boxes":soft_violation_boxes,"total_soft_lateness_s":total_soft_late,
       "continuous_communication_pass":comm_ok,"continuous_leaf_intervals":int(cert.leaf_intervals.sum()),
@@ -176,7 +183,7 @@ def main(base,outdir):
       "relay_peak":relay_peak,"component_peak":comp_peak,
       "transport_resource_pass":transport_resource_ok,"battery_resource_pass":battery_resource_ok,
       "relay_resource_pass":relay_resource_ok,"component_pass":comp_ok,
-      "transport_energy_kwh":float(tr.transport_energy_kwh.sum()),"relay_energy_kwh":float(missions.energy_kwh.sum()),
+      "transport_energy_kwh":float((tr.transport_energy_kwh if "transport_energy_kwh" in tr.columns else tr.energy_kwh).sum()),"relay_energy_kwh":float(missions.energy_kwh.sum()),
       "joint_energy_kwh":joint_energy,"joint_completion_s":joint_completion
     }
     cert.to_csv(out/"continuous_communication_certificate.csv",index=False,encoding="utf-8-sig")
