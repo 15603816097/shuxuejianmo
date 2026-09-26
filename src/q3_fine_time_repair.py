@@ -66,8 +66,8 @@ def main(base,outdir):
         msvars[mid]=ms; mevars[mid]=me
         for _,a in ass.iterrows():
             ri,off0,off1=block_offsets[str(a.block_id)]
-            m.Add(ms <= starts[ri]+I(off0))
-            m.Add(me >= starts[ri]+I(off1))
+            m.Add(ms <= starts[ri]+int(math.floor(off0*S+1e-12)))
+            m.Add(me >= starts[ri]+int(math.ceil(off1*S-1e-12)))
         # force tight envelope by objective later, but exact containment is enough.
         q={"经度（°）":float(mr.lon),"纬度（°）":float(mr.lat)}
         dist,terrain,*_=line_geometry(data["center"],q,data["dem"])
@@ -113,12 +113,19 @@ def main(base,outdir):
     rav={"R01":0.0,"R02":0.0}
     for idx in missions.sort_values("busy_start_s").index:
         mid=str(missions.at[idx,"mission_id"])
-        ss=solver.Value(msvars[mid])/S; ee=solver.Value(mevars[mid])/S
-        bs=solver.Value(bsvars[mid])/S; be=solver.Value(bevars[mid])/S
+        ass=ba[ba.mission_id.astype(str)==mid]
+        exact_starts=[]; exact_ends=[]
+        for _,a in ass.iterrows():
+            ri,off0,off1=block_offsets[str(a.block_id)]
+            exact_starts.append(solver.Value(starts[ri])/S + off0)
+            exact_ends.append(solver.Value(starts[ri])/S + off1)
+        ss=min(exact_starts); ee=max(exact_ends)
         q={"经度（°）":float(missions.at[idx,"lon"]),"纬度（°）":float(missions.at[idx,"lat"])}
         dist,terrain,*_=line_geometry(data["center"],q,data["dem"])
         tout,eout=relay_leg_time_energy(data,dist,terrain,float(data["center"]["海拔（m）"]),float(missions.at[idx,"altitude_m"]))
         tback,eback=relay_leg_time_energy(data,dist,terrain,float(missions.at[idx,"altitude_m"]),float(data["center"]["海拔（m）"]))
+        bs=ss-float(rdat["prep_s"])-tout-float(rdat["link_s"])
+        be=ee+tback+float(rdat["turn_s"])
         energy=eout+eback+hover*(ee-ss)/3600.0; soc=1-energy/float(rdat["energy_kwh"])
         rid=min(rav,key=lambda k:(rav[k],k))
         if rav[rid]>bs+1e-9: raise RuntimeError("R=2 coloring failed")
