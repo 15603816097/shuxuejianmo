@@ -13,7 +13,7 @@ from collections import defaultdict
 import pandas as pd
 from ortools.sat.python import cp_model
 from minimal_pipeline import load_inputs, line_geometry
-from q3_semantics_core import build_authoritative_timeline, direct_and_relay_blocks
+from q3_semantics_core import build_authoritative_timeline, direct_and_relay_blocks, deadline_ledger
 from q3_official_semantics import relay_leg_time_energy, component_charge_time
 
 S=1000
@@ -24,7 +24,7 @@ def parse_ids(v):
     try:return [str(x) for x in json.loads(str(v))]
     except Exception:return [str(x) for x in ast.literal_eval(str(v))]
 
-def main(base,outdir):
+def main(base,outdir,joint_cap_s=None,prioritize_soft=False):
     base=Path(base); out=Path(outdir); out.mkdir(parents=True,exist_ok=True)
     data=load_inputs()
     tr=pd.read_csv(base/"transport_schedule.csv").reset_index(drop=True)
@@ -33,8 +33,10 @@ def main(base,outdir):
 
     # authoritative exact block offsets by route, keyed to existing block ids by order
     block_offsets={}
+    timelines={}
     for ri,r in tr.iterrows():
         tl=build_authoritative_timeline(data,(str(r.service),),str(r.drone_type),parse_ids(r.box_ids))
+        timelines[ri]=tl
         bl=direct_and_relay_blocks(data,tl)
         rows=ba[ba.route_index.astype(int)==ri].sort_values("block_start_s").reset_index(drop=True)
         if len(rows)!=len(bl): raise RuntimeError(f"route {ri} block mismatch")
@@ -54,6 +56,22 @@ def main(base,outdir):
         bat[typ].append(m.NewIntervalVar(s,bd,be,f"bat{i}"))
     for typ,ints in air.items(): m.AddCumulative(ints,[1]*len(ints),len(data["aircraft"][typ]))
     for typ,ints in bat.items(): m.AddCumulative(ints,[1]*len(ints),int(data["batteries"][typ]))
+
+    late_flags=[]; late_amounts=[]
+    for ri,tl in timelines.items():
+        for j,d in enumerate(deadline_ledger(data,tl)):
+            arr=starts[ri]+int(math.ceil(float(d["delivery_time_s"])*S-1e-12))
+            due=int(math.floor(float(d["deadline_s"])*S+1e-12))
+            if bool(d["hard"]):
+                m.Add(arr<=due)
+            elif prioritize_soft:
+                lv=m.NewIntVar(0,H*2,f"late_{ri}_{j}")
+                fl=m.NewBoolVar(f"lateflag_{ri}_{j}")
+                m.Add(lv>=arr-due)
+                m.Add(lv==0).OnlyEnforceIf(fl.Not())
+                m.Add(lv>=1).OnlyEnforceIf(fl)
+                m.Add(lv<=H*2*fl)
+                late_flags.append(fl); late_amounts.append(lv)
 
     # five fixed missions, fixed positions; service window is exact envelope of assigned block offsets
     rdat=data["relay"]; hover=float(rdat["hover_power_kw"])+float(rdat["comm_power_kw"])
@@ -98,8 +116,15 @@ def main(base,outdir):
     joint=m.NewIntVar(0,H*3,"joint")
     for e in ends: m.Add(joint>=e)
     for be in bevars.values(): m.Add(joint>=be)
+    if joint_cap_s is not None:
+        m.Add(joint<=int(math.floor(float(joint_cap_s)*S+1e-9)))
     total_span=sum(mevars[mid]-msvars[mid] for mid in msvars)
-    m.Minimize(joint*1000 + total_span)
+    if prioritize_soft:
+        late_count=sum(late_flags) if late_flags else 0
+        total_late=sum(late_amounts) if late_amounts else 0
+        m.Minimize(late_count*2_000_000_000_000 + total_late*1000 + joint*10 + total_span)
+    else:
+        m.Minimize(joint*1000 + total_span)
 
     solver=cp_model.CpSolver(); solver.parameters.max_time_in_seconds=300; solver.parameters.num_search_workers=8
     st=solver.Solve(m)
@@ -160,7 +185,10 @@ def main(base,outdir):
         ba.at[i,"block_end_s"]=float(tr.at[ri,"start_s"])+off1
 
     rec={"solver_status":solver.StatusName(st),"joint_completion_s":solver.Value(joint)/S,
-         "transport_routes":len(tr),"relay_sorties":len(missions)}
+         "transport_routes":len(tr),"relay_sorties":len(missions),
+         "soft_violation_boxes_optimized":int(solver.Value(sum(late_flags))) if prioritize_soft and late_flags else None,
+         "total_soft_lateness_s_optimized":solver.Value(sum(late_amounts))/S if prioritize_soft and late_amounts else None,
+         "joint_cap_s":joint_cap_s}
     tr.to_csv(out/"transport_schedule.csv",index=False,encoding="utf-8-sig")
     missions.to_csv(out/"relay_missions.csv",index=False,encoding="utf-8-sig")
     ba.to_csv(out/"block_assignments.csv",index=False,encoding="utf-8-sig")
@@ -170,4 +198,5 @@ def main(base,outdir):
 if __name__=="__main__":
     import argparse
     ap=argparse.ArgumentParser(); ap.add_argument("--base",required=True); ap.add_argument("--out",required=True)
-    a=ap.parse_args(); main(a.base,a.out)
+    ap.add_argument("--joint-cap-s",type=float,default=None); ap.add_argument("--prioritize-soft",action="store_true")
+    a=ap.parse_args(); main(a.base,a.out,a.joint_cap_s,a.prioritize_soft)
