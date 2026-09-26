@@ -1,0 +1,44 @@
+name: q3-final-continuous-cert
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - src/q3_final_continuous_cert.py
+      - .github/workflows/q3-final-continuous-cert.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Download materialized 18x5
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/final
+          gh run download 36243861245 -n q3-joint18x5-materialized -D /tmp/final
+      - name: Download joint hypergraph
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/joint
+          gh run download 36241328424 -n q3-joint-grouping-search -D /tmp/joint
+          mkdir -p /tmp/final/q3_joint18x5_materialized/hypergraph
+          cp /tmp/joint/q3_joint_grouping_hg/JOINT/block_diagnostics.csv /tmp/final/q3_joint18x5_materialized/hypergraph/
+      - name: Recursive continuous certification to 0.1 s
+        run: |
+          python src/q3_final_continuous_cert.py             --base /tmp/final/q3_joint18x5_materialized             --out results/q3_official
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-final-continuous-cert
+          path: results/q3_official/
