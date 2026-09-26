@@ -73,7 +73,10 @@ def main(base,outdir):
         dist,terrain,*_=line_geometry(data["center"],q,data["dem"])
         tout,eout=relay_leg_time_energy(data,dist,terrain,float(data["center"]["海拔（m）"]),float(mr.altitude_m))
         tback,eback=relay_leg_time_energy(data,dist,terrain,float(mr.altitude_m),float(data["center"]["海拔（m）"]))
-        # Conservative millisecond bracketing: CP relay intervals must fully\n        # contain the later exact floating-point intervals used by certification.\n        lead=int(math.ceil((float(rdat["prep_s"])+tout+float(rdat["link_s"]))*S-1e-12))\n        tail=int(math.ceil((tback+float(rdat["turn_s"]))*S-1e-12))
+        # Conservative millisecond bracketing: CP relay intervals must fully
+        # contain the later exact floating-point intervals used by certification.
+        lead=int(math.ceil((float(rdat["prep_s"])+tout+float(rdat["link_s"]))*S-1e-12))
+        tail=int(math.ceil((tback+float(rdat["turn_s"]))*S-1e-12))
         bs=m.NewIntVar(0,H*2,f"bs_{mid}"); be=m.NewIntVar(0,H*2,f"be_{mid}"); bd=m.NewIntVar(0,H*2,f"bd_{mid}")
         m.Add(bs==ms-lead); m.Add(be==me+tail); m.Add(bd==be-bs)
         bsvars[mid]=bs; bevars[mid]=be
