@@ -1,0 +1,71 @@
+name: q3-k22-under7000-final-cert
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - .github/workflows/q3-k22-under7000-final-cert.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Download K22 Pareto candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/k22
+          gh run download 36249616987 -n q3-k22-pareto -D /tmp/k22
+          find /tmp/k22 -maxdepth 4 -type f | sort
+      - name: Materialize fixed K22 + 5 relay missions
+        run: |
+          python src/q3_joint18x5_materialize.py \
+            --schedule /tmp/k22/master/selected_schedule.csv \
+            --hypergraph /tmp/k22/hg/K22 \
+            --out /tmp/k22_materialized
+      - name: Fine-time exact resource repair and minimum completion
+        run: |
+          python src/q3_fine_time_repair.py \
+            --base /tmp/k22_materialized \
+            --out /tmp/k22_repaired
+      - name: Stage strict hypergraph diagnostics
+        run: |
+          mkdir -p /tmp/k22_repaired/hypergraph
+          cp /tmp/k22/hg/K22/block_diagnostics.csv /tmp/k22_repaired/hypergraph/
+      - name: Final recursive continuous-time certification
+        run: |
+          python src/q3_final_continuous_cert.py \
+            --base /tmp/k22_repaired \
+            --out results/q3_k22_final
+      - name: Check 7000 second target
+        run: |
+          python - <<'PY'
+          import json
+          s=json.load(open("results/q3_k22_final/q3_global_summary.json",encoding="utf-8"))
+          out={
+            "certified":s.get("q3_global_certified"),
+            "joint_completion_s":s.get("joint_completion_s"),
+            "under_7000":bool(s.get("q3_global_certified") and s.get("joint_completion_s",1e99)<7000),
+            "soft_violation_boxes":s.get("soft_violation_boxes"),
+            "joint_energy_kwh":s.get("joint_energy_kwh"),
+            "transport_routes":s.get("transport_routes"),
+            "relay_sorties":s.get("relay_sorties")
+          }
+          print("UNDER7000_SUMMARY="+json.dumps(out,ensure_ascii=False))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-k22-under7000-final-cert
+          path: |
+            results/q3_k22_final/
+            /tmp/k22_repaired/
