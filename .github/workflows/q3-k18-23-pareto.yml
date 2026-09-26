@@ -1,0 +1,65 @@
+name: q3-k18-23-pareto
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - src/q3_k18_23_pareto.py
+      - .github/workflows/q3-k18-23-pareto.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    strategy:
+      fail-fast: false
+      matrix:
+        k: [18,19,20,21,22,23]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Exact-K transport optimization
+        run: |
+          python src/q3_k18_23_pareto.py --exact-routes ${{ matrix.k }} --time-limit 300 --out results/k${{ matrix.k }}/master
+      - name: Strict 1596-point communication hypergraph
+        run: |
+          python src/q3_hover_hypergraph.py --schedule results/k${{ matrix.k }}/master/selected_schedule.csv --label K${{ matrix.k }} --out results/k${{ matrix.k }}/hg
+      - name: Minimum relay-sortie screen
+        run: |
+          python src/q3_friend_wave_screen.py --schedule results/k${{ matrix.k }}/master/selected_schedule.csv --hypergraph results/k${{ matrix.k }}/hg/K${{ matrix.k }} --label K${{ matrix.k }} --out results/k${{ matrix.k }}/relay
+      - name: Print comparable summary
+        run: |
+          python - <<'PY'
+          import json, pandas as pd, os
+          k=os.environ["K"]
+          a=json.load(open(f"results/k{k}/master/summary.json",encoding="utf-8"))
+          hg=json.load(open(f"results/k{k}/hg/K{k}/summary.json",encoding="utf-8"))
+          rr=json.load(open(f"results/k{k}/relay/K{k}.json",encoding="utf-8"))
+          feas=next((x for x in rr if x.get("status") in ("OPTIMAL","FEASIBLE")),{})
+          out={
+            "K":int(k),
+            "master_status":a.get("status"),
+            "soft_violation_boxes":a.get("soft_violation_boxes"),
+            "total_soft_lateness_s":a.get("total_soft_lateness_s"),
+            "transport_completion_s":a.get("joint_completion_s"),
+            "transport_energy_kwh":a.get("transport_energy_kwh"),
+            "relay_blocks":hg.get("relay_blocks") or hg.get("block_count"),
+            "min_hover_positions":hg.get("minimum_cover_size") or hg.get("minimum_geographic_positions"),
+            "relay_screen_status":feas.get("status"),
+            "relay_sorties_screen":feas.get("relay_sorties"),
+            "screen_joint_completion_s":feas.get("joint_completion_s")
+          }
+          print("PARETO_SUMMARY="+json.dumps(out,ensure_ascii=False))
+          PY
+        env:
+          K: ${{ matrix.k }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-k${{ matrix.k }}-pareto
+          path: results/k${{ matrix.k }}/
