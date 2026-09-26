@@ -1,0 +1,44 @@
+name: q3-fine-time-failure-diagnostic
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - .github/workflows/q3-fine-time-failure-diagnostic.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas
+      - name: Download latest cert
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/cert
+          gh run download 36245693057 -n q3-fine-time-repair-and-cert -D /tmp/cert
+      - name: Print failed intervals
+        run: |
+          python - <<'PY'
+          import json,pandas as pd
+          c=pd.read_csv('/tmp/cert/continuous_communication_certificate.csv')
+          f=c[c['pass']==False].copy()
+          print(json.dumps({
+            'rows_total':len(c),'rows_failed':len(f),
+            'failed_routes':sorted(set(int(x) for x in f.route_index.tolist())),
+            'with_block':int((f.block_id.fillna('').astype(str)!='').sum()),
+            'without_block':int((f.block_id.fillna('').astype(str)=='').sum()),
+            'modes':f.modes.value_counts().to_dict()
+          },indent=2))
+          cols=['route_index','block_id','phase','start_s','end_s','mission_id','relay_id',
+                'min_direct_margin_db','min_access_margin_db','min_backhaul_margin_db','modes','leaf_intervals']
+          print(f[cols].sort_values(['route_index','start_s']).to_string(index=False))
+          PY
