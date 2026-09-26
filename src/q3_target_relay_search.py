@@ -20,6 +20,13 @@ from q3_semantics_core import build_authoritative_timeline, deadline_ledger
 S=1000
 H=18000*S
 
+def route_order(r):
+    if "visit_order" in r.index and pd.notna(r["visit_order"]):
+        return tuple(x for x in str(r["visit_order"]).split(">") if x)
+    if "service" in r.index and pd.notna(r["service"]):
+        return (str(r["service"]),)
+    raise RuntimeError("schedule row missing visit_order/service")
+
 def parse_ids(v):
     if isinstance(v,list): return [str(x) for x in v]
     try: return [str(x) for x in json.loads(str(v))]
@@ -60,7 +67,7 @@ def main(schedule,hg,relay_sorties,target_s,outdir,time_limit):
 
     for i,r in sch.iterrows():
         ids=parse_ids(r.box_ids)
-        tl=build_authoritative_timeline(data,(str(r.service),),str(r.drone_type),ids)
+        tl=build_authoritative_timeline(data,route_order(r),str(r.drone_type),ids)
         timelines[i]=tl
         s=m.NewIntVar(0,H,f"s{i}")
         dur=int(math.ceil(float(r.duration_s)*S-1e-12))
@@ -207,7 +214,7 @@ def main(schedule,hg,relay_sorties,target_s,outdir,time_limit):
     rec.update({"soft_violation_boxes":int(solver.Value(late_count)) if late_flags else 0,
                 "total_soft_lateness_s":solver.Value(total_late)/S if late_amounts else 0.0,
                 "joint_completion_s":solver.Value(joint)/S,
-                "transport_energy_kwh":float(sum(float(x["transport_energy_kwh"]) for x in tr)),
+                "transport_energy_kwh":float(sum(float(x.get("transport_energy_kwh",x.get("energy_kwh"))) for x in tr)),
                 "relay_energy_kwh":float(sum(x["energy_kwh"] for x in missions))})
     rec["joint_energy_kwh"]=rec["transport_energy_kwh"]+rec["relay_energy_kwh"]
 
