@@ -1,0 +1,46 @@
+name: q3-balanced-reopt-and-cert
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - src/q3_balanced_reopt.py
+      - .github/workflows/q3-balanced-reopt-and-cert.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  optimize-cert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Download certified 18x5 baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/base
+          gh run download 36247673371 -n q3-fine-time-repair-and-cert -D /tmp/base
+      - name: Optimize lateness under 9000s cap
+        run: |
+          python src/q3_balanced_reopt.py --base /tmp/base --out /tmp/reopt
+      - name: Download hypergraph diagnostics
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/joint /tmp/reopt/hypergraph
+          gh run download 36241328424 -n q3-joint-grouping-search -D /tmp/joint
+          cp /tmp/joint/q3_joint_grouping_hg/JOINT/block_diagnostics.csv /tmp/reopt/hypergraph/
+      - name: Final full Q3 certification
+        run: |
+          python src/q3_final_continuous_cert.py --base /tmp/reopt --out results/q3_balanced_reopt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-balanced-reopt-and-cert
+          path: results/q3_balanced_reopt/
