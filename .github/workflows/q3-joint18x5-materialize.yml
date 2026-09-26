@@ -1,0 +1,36 @@
+name: q3-joint18x5-materialize
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - src/q3_joint18x5_materialize.py
+      - .github/workflows/q3-joint18x5-materialize.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Download JOINT artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/joint
+          gh run download 36241328424 -n q3-joint-grouping-search -D /tmp/joint
+      - name: Materialize 18+5 schedule and exact component ledger
+        run: |
+          python src/q3_joint18x5_materialize.py             --schedule /tmp/joint/q3_joint_grouping/selected_schedule.csv             --hypergraph /tmp/joint/q3_joint_grouping_hg/JOINT             --out results/q3_joint18x5_materialized
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-joint18x5-materialized
+          path: results/q3_joint18x5_materialized/
