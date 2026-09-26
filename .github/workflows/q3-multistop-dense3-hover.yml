@@ -1,0 +1,88 @@
+name: q3-multistop-dense3-hover
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - .github/workflows/q3-multistop-dense3-hover.yml
+      - src/q3_dense_three_hover_search.py
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  dense:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Download previous multi-stop artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/base
+          gh run download 36278061743 -n q3-multistop-under7000-search -D /tmp/base
+          find /tmp/base -maxdepth 5 -type f | sort | head -200
+      - name: Dense global hover refinement
+        run: |
+          python src/q3_dense_three_hover_search.py \
+            --schedule /tmp/base/q3_multistop/transport_seed.csv \
+            --old-hg /tmp/base/q3_multistop/hg/MULTI \
+            --out results/q3_multistop_dense3/hg
+      - name: Try three-relay schedule under 7000 if geography permits
+        shell: bash
+        run: |
+          set -u
+          if python - <<'PY'
+          import json,sys
+          s=json.load(open("results/q3_multistop_dense3/hg/summary.json",encoding="utf-8"))
+          sys.exit(0 if s.get("minimum_hover_positions",99) <= 3 else 1)
+          PY
+          then
+            python src/q3_target_relay_search.py \
+              --schedule /tmp/base/q3_multistop/transport_seed.csv \
+              --hypergraph results/q3_multistop_dense3/hg \
+              --relay-sorties 3 \
+              --target-s 7000 \
+              --time-limit 420 \
+              --out results/q3_multistop_dense3/m3/materialized
+
+            python src/q3_fine_time_repair.py \
+              --base results/q3_multistop_dense3/m3/materialized \
+              --out results/q3_multistop_dense3/m3/repaired \
+              --joint-cap-s 7000 \
+              --prioritize-soft
+
+            mkdir -p results/q3_multistop_dense3/m3/repaired/hypergraph
+            cp results/q3_multistop_dense3/hg/block_diagnostics.csv results/q3_multistop_dense3/m3/repaired/hypergraph/
+
+            python src/q3_final_continuous_cert.py \
+              --base results/q3_multistop_dense3/m3/repaired \
+              --out results/q3_multistop_dense3/m3/final
+
+            python - <<'PY'
+          import json
+          s=json.load(open("results/q3_multistop_dense3/m3/final/q3_global_summary.json",encoding="utf-8"))
+          out={
+            "certified":s.get("q3_global_certified"),
+            "transport_routes":s.get("transport_routes"),
+            "relay_sorties":s.get("relay_sorties"),
+            "joint_completion_s":s.get("joint_completion_s"),
+            "soft_violation_boxes":s.get("soft_violation_boxes"),
+            "joint_energy_kwh":s.get("joint_energy_kwh"),
+            "continuous_communication_pass":s.get("continuous_communication_pass")
+          }
+          print("DENSE3_FINAL="+json.dumps(out,ensure_ascii=False))
+          PY
+          else
+            echo "Dense search still requires at least four geographic hover positions; skip temporal M=3 search."
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-multistop-dense3-hover
+          path: results/q3_multistop_dense3/
