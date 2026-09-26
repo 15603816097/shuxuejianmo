@@ -5,6 +5,7 @@ on:
       - chatgpt-architecture
     paths:
       - .github/workflows/q3-k20-final-cert.yml
+      - src/q3_fine_time_repair.py
   workflow_dispatch:
 permissions:
   contents: read
