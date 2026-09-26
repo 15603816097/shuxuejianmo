@@ -1,0 +1,45 @@
+name: q3-flexible-four-sorties
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - src/q3_flexible_four_sorties.py
+      - .github/workflows/q3-flexible-four-sorties.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        label:
+          - K18
+          - K19A
+          - K19B
+          - K20
+          - K23
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Download friend-style baseline and hypergraph
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/in
+          gh run download 36233921280 -n "q3-friend-style-${{ matrix.label }}" -D /tmp/in
+      - name: Test flexible-position four-sortie schedule
+        run: |
+          python src/q3_flexible_four_sorties.py             --schedule "/tmp/in/q3_friend_baselines/${{ matrix.label }}.csv"             --hypergraph "/tmp/in/q3_friend_hypergraph/friend-${{ matrix.label }}"             --label "${{ matrix.label }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-flexible-four-${{ matrix.label }}
+          path: results/q3_flexible_four/
