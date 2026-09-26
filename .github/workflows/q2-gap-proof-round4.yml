@@ -1,0 +1,60 @@
+name: q2-gap-proof-round4
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - '.github/workflows/q2-gap-proof-round4.yml'
+  workflow_dispatch:
+
+jobs:
+  prove:
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        k: [18, 24, 25, 26]
+        seed: [509, 911]
+    runs-on: ubuntu-latest
+    timeout-minutes: 130
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --upgrade pip
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Resolve best round-3 incumbent
+        id: src
+        shell: bash
+        run: |
+          K=${{ matrix.k }}
+          case "$K" in
+            18) echo "hintseed=101" >> "$GITHUB_OUTPUT"; echo "ub=8855.3" >> "$GITHUB_OUTPUT" ;;
+            24) echo "hintseed=307" >> "$GITHUB_OUTPUT"; echo "ub=6240.5" >> "$GITHUB_OUTPUT" ;;
+            25) echo "hintseed=307" >> "$GITHUB_OUTPUT"; echo "ub=5977.8" >> "$GITHUB_OUTPUT" ;;
+            26) echo "hintseed=307" >> "$GITHUB_OUTPUT"; echo "ub=6047.6" >> "$GITHUB_OUTPUT" ;;
+          esac
+      - name: Download round-3 incumbent
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          mkdir -p /tmp/hint
+          gh run download 36210879684             -n "q2-gap-r3-K${{ matrix.k }}-seed-${{ steps.src.outputs.hintseed }}"             -D /tmp/hint
+          HINT="$(find /tmp/hint -name schedule.csv | head -1)"
+          test -n "$HINT"
+          echo "HINT=$HINT" >> "$GITHUB_ENV"
+      - name: Deep fixed-K proof search round 4
+        run: >
+          python src/q2_fixed_k_gap_refine.py
+          --k ${{ matrix.k }}
+          --seed ${{ matrix.seed }}
+          --time-limit 7200
+          --upper-bound ${{ steps.src.outputs.ub }}
+          --hint-csv "$HINT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q2-gap-r4-K${{ matrix.k }}-seed-${{ matrix.seed }}
+          path: results/q2_v2/gap_refine/K${{ matrix.k }}/seed_${{ matrix.seed }}/
