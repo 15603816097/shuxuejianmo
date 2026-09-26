@@ -1,0 +1,58 @@
+name: q3-latest-cert-diagnostic
+on:
+  push:
+    branches:
+      - chatgpt-architecture
+    paths:
+      - .github/workflows/q3-latest-cert-diagnostic.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas
+      - name: Download latest fine-time cert
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/cert
+          gh run download 36246291058 -n q3-fine-time-repair-and-cert -D /tmp/cert
+      - name: Inspect remaining failures and exact gaps
+        run: |
+          python - <<'PY'
+          import json,pandas as pd
+          c=pd.read_csv('/tmp/cert/continuous_communication_certificate.csv')
+          b=pd.read_csv('/tmp/cert/block_assignments.csv')
+          m=pd.read_csv('/tmp/cert/relay_missions.csv')
+          f=c[c['pass']==False].copy()
+          print(json.dumps({
+            'rows_total':len(c),'rows_failed':len(f),
+            'failed_routes':sorted(set(int(x) for x in f.route_index.tolist())),
+            'with_block':int((f.block_id.fillna('').astype(str)!='').sum()),
+            'without_block':int((f.block_id.fillna('').astype(str)=='').sum()),
+            'modes':f.modes.value_counts().to_dict()
+          },indent=2))
+          for _,r in f.iterrows():
+            bid=str(r.block_id)
+            ar=b[b.block_id.astype(str)==bid].iloc[0]
+            mr=m[m.mission_id.astype(str)==str(ar.mission_id)].iloc[0]
+            print({
+              'block_id':bid,'route':int(r.route_index),'mission':str(ar.mission_id),
+              'phase':str(r.phase),'cert_start':float(r.start_s),'cert_end':float(r.end_s),
+              'service_start':float(mr.service_start_s),'service_end':float(mr.service_end_s),
+              'left_gap_s':float(r.start_s)-float(mr.service_start_s),
+              'right_gap_s':float(mr.service_end_s)-float(r.end_s),
+              'direct':float(r.min_direct_margin_db),
+              'access':float(r.min_access_margin_db),
+              'backhaul':float(r.min_backhaul_margin_db),
+              'modes':str(r.modes),'leaf_intervals':int(r.leaf_intervals)
+            })
+          PY
