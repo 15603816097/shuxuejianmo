@@ -1,0 +1,47 @@
+name: q3-hover-hypergraph
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - 'src/q3_hover_hypergraph.py'
+      - '.github/workflows/q3-hover-hypergraph.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  hypergraph:
+    strategy:
+      fail-fast: false
+      matrix:
+        label: [K22, K23]
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Download Q2 schedule
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          mkdir -p /tmp/q2
+          if [ "${{ matrix.label }}" = "K22" ]; then
+            gh run download 36203061746 -n q2-k22-refine-seed-43 -D /tmp/q2
+          else
+            gh run download 36206159819 -n q2-gap-r2-K23-seed-29 -D /tmp/q2
+          fi
+          test -f /tmp/q2/schedule.csv
+      - name: Build strict hover coverage hypergraph
+        run: python src/q3_hover_hypergraph.py --schedule /tmp/q2/schedule.csv --label ${{ matrix.label }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-hover-hypergraph-${{ matrix.label }}
+          path: results/q3_hypergraph/${{ matrix.label }}/
