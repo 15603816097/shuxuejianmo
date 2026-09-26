@@ -19,6 +19,13 @@ from q3_official_semantics import relay_leg_time_energy, component_charge_time
 S=1000
 H=18000*S
 def I(x): return int(round(float(x)*S))
+def route_order(r):
+    if "visit_order" in r.index and pd.notna(r["visit_order"]):
+        return tuple(x for x in str(r["visit_order"]).split(">") if x)
+    if "service" in r.index and pd.notna(r["service"]):
+        return (str(r["service"]),)
+    raise RuntimeError("schedule row missing visit_order/service")
+
 def parse_ids(v):
     if isinstance(v,list): return [str(x) for x in v]
     try:return [str(x) for x in json.loads(str(v))]
@@ -35,7 +42,7 @@ def main(base,outdir,joint_cap_s=None,prioritize_soft=False):
     block_offsets={}
     timelines={}
     for ri,r in tr.iterrows():
-        tl=build_authoritative_timeline(data,(str(r.service),),str(r.drone_type),parse_ids(r.box_ids))
+        tl=build_authoritative_timeline(data,route_order(r),str(r.drone_type),parse_ids(r.box_ids))
         timelines[ri]=tl
         bl=direct_and_relay_blocks(data,tl)
         rows=ba[ba.route_index.astype(int)==ri].sort_values("block_start_s").reset_index(drop=True)
