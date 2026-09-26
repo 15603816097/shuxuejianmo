@@ -1,0 +1,40 @@
+name: q3-global-k22
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - 'src/q3_global_k22_schedule.py'
+      - '.github/workflows/q3-global-k22.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  schedule:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Download K22 Q2 schedule
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/q2 /tmp/hg
+          gh run download 36203061746 -n q2-k22-refine-seed-43 -D /tmp/q2
+          gh run download 36228095518 -n q3-hover-hypergraph-K22 -D /tmp/hg
+          test -f /tmp/q2/schedule.csv
+          test -f /tmp/hg/minimum_cover_positions.csv
+      - name: Joint transport-relay scheduling
+        run: python src/q3_global_k22_schedule.py --schedule /tmp/q2/schedule.csv --hypergraph /tmp/hg
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-global-k22
+          path: results/q3_global/
