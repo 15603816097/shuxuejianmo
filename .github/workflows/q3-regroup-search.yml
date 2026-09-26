@@ -1,0 +1,42 @@
+name: q3-regroup-search
+
+on:
+  push:
+    branches: [chatgpt-architecture]
+    paths:
+      - '.github/workflows/q3-regroup-search.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  search:
+    strategy:
+      fail-fast: false
+      matrix:
+        k: [23, 24, 25, 26, 27, 28]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy pandas scipy openpyxl ortools h5py
+      - name: Re-group and schedule Q3 with R=2
+        run: python src/q3_new_scheduler.py --k ${{ matrix.k }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: q3-regroup-K${{ matrix.k }}
+          path: |
+            results/q3_K${{ matrix.k }}_new_schedule.csv
+            results/q3_K${{ matrix.k }}_new_deliveries.csv
+            results/q3_K${{ matrix.k }}_new_resource_events.csv
+            results/q3_K${{ matrix.k }}_new_dynamic_communication.csv
+            results/q3_K${{ matrix.k }}_new_service_coverage.csv
+            results/q3_K${{ matrix.k }}_candidate_rejection_log.csv
+            results/q3_K${{ matrix.k }}_unassigned.csv
+            results/q3_K${{ matrix.k }}_committed_scheduler_summary.json
